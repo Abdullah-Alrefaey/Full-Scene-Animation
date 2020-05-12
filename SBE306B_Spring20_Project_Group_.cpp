@@ -1,0 +1,716 @@
+//
+// Created by Abdullah-Mohammed on 12-May-20.
+//
+
+#include <GL/glut.h>
+#include <cstdlib>
+#include <cmath>
+using namespace std;
+
+static int mainBody = 0;
+static int leftShoulder = -90, rightShoulder = 90;
+static int leftElbow = 0, rightElbow = 0;
+static int leftLeg = 0, rightLeg = 0;
+static int leftKnee = 0, rightKnee = 0;
+static int leftFingerBase1 = 0, leftFingerBase2 = 0, leftFingerBase3 = 0, leftFingerBase4 = 0, leftFingerBase5 = 0;
+static int leftFingerUp1 = 0, leftFingerUp2  = 0, leftFingerUp3 = 0, leftFingerUp4 = 0, leftFingerUp5 = 0;
+
+static int rightFingerBase1 = 0, rightFingerBase2 = 0, rightFingerBase3 = 0, rightFingerBase4 = 0, rightFingerBase5 = 0;
+static int rightFingerUp1 = 0, rightFingerUp2  = 0, rightFingerUp3 = 0, rightFingerUp4 = 0, rightFingerUp5 = 0;
+
+int moving, startx, starty;
+GLfloat angle = 0.0;   /* in degrees */
+
+double eye[] = { 0, 0, 6 };
+double center[] = { 0, 0, 1 };
+double up[] = { 0, 1, 0 };
+double direction[3];
+double speed = 0.1;
+
+void init();
+void display();
+void reshape(int w, int h);
+void keyboard(unsigned char key, int x, int y);
+static void mouse(int button, int state, int x, int y);
+static void motion(int x, int y);
+void createFullBody();
+void createFinger(float xBase, float yBase, float zBase, int angleBase, float xrBack,
+                  float xUp, float yUp, float zUp, int angleUp);
+
+void createArm(float xShld, float yShld, float zShld,
+               float xElb, float yElb, float zElb,
+               float xFing, float yFing,
+               float zFing1, float zFing2, float zFing3, float zFing4, float zFing5,
+               float xrB, float xUp,
+               float xShldRotate, int ShldAngle,
+               float xElbRotate, int ElbAngle,
+               int baseAngle1, int upAngle1, int baseAngle2, int upAngle2,
+               int baseAngle3, int upAngle3, int baseAngle4, int upAngle4,
+               int baseAngle5, int upAngle5);
+
+void createLeg(float xUp, float yUp, float zUp,
+               float xLow, float yLow, float zLow,
+               float ylegRotate, int legAngle,
+               float yKneeRotate, int kneeAngle);
+
+double *crossProduct(const double a[], const double b[]);
+void normalize(double a[]);
+void rotatePoint(const double a[], double theta, double p[]);
+
+void Left();
+void Right();
+void Up();
+void Down();
+void moveForward();
+void moveBack();
+void specialKeys(int key, int x, int y);
+
+int main(int argc, char **argv)
+{
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(900, 600);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Robot Body");
+    init();
+    glutMouseFunc(mouse);
+    glutMotionFunc(motion);
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutSpecialFunc(specialKeys);
+    glutKeyboardFunc(keyboard);
+
+    glutMainLoop();
+    return 0;
+}
+
+void init()
+{
+    glMatrixMode(GL_PROJECTION);
+    gluPerspective(65.0, (GLfloat)1024 / (GLfloat)869, 1.0, 60.0);
+}
+
+void display()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glShadeModel(GL_FLAT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(eye[0], eye[1], eye[2],
+              center[0], center[1], center[2],
+              up[0], up[1], up[2]);
+
+    createFullBody();
+    glutSwapBuffers();
+}
+
+void createFullBody()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glPushMatrix();
+
+    // Draw The Head
+    glTranslatef (-1.0, 0.0, 0.0);
+    glRotatef ((GLfloat) mainBody, 0.0, 1.0, 0.0);
+    glTranslatef (1.0, 0.0, 0.0);
+    glPushMatrix();
+    glTranslatef(0.0, 2.00, 0.0);
+    glutWireSphere(0.3, 20, 20);
+    glPopMatrix();
+
+    // Draw The Body
+    glPushMatrix();
+    glTranslatef(0.0, 0.70, 0.0);
+    glScalef(1.2, 2.0, 0.5);
+    glutWireCube(1.0);
+    glPopMatrix();
+
+    // Draw Left Arm
+    glPushMatrix();
+    createArm(1.3, 1.5, 0.0,
+              1.0, 0.0, 0.0,
+              1.5, 0.05,
+              0.2, 0.1, 0.0, -0.1, -0.1,
+              0.1, 0.1,
+              0.5, leftShoulder,
+              -0.5, leftElbow,
+              leftFingerBase1, leftFingerUp1,
+              leftFingerBase2, leftFingerUp2,
+              leftFingerBase3, leftFingerUp3,
+              leftFingerBase4, leftFingerUp4,
+              leftFingerBase5, leftFingerUp5);
+    glPopMatrix();
+
+    // Draw Right Arm
+    glPushMatrix();
+    createArm(-1.3, 1.5, 0.0,
+              -1.0, 0.0, 0.0,
+              -1.5, 0.05,
+              0.2, 0.1, 0.0, -0.1, -0.1,
+              -0.1, -0.1,
+              -0.5, rightShoulder,
+              0.5, rightElbow,
+              rightFingerBase1, rightFingerUp1,
+              rightFingerBase2, rightFingerUp2,
+              rightFingerBase3, rightFingerUp3,
+              rightFingerBase4, rightFingerUp4,
+              rightFingerBase5, rightFingerUp5);
+    glPopMatrix();
+
+    // Draw Left Leg
+    glPushMatrix();
+    createLeg(0.45, -0.8, 0.0,
+              0.0, -1.0, 0.0,
+              -0.5, leftLeg,
+              -0.5, leftKnee);
+    glPopMatrix();
+
+    // Draw Right Leg
+    glPushMatrix();
+    createLeg(-0.45, -0.8, 0.0,
+              0.0, -1.0, 0.0,
+              -0.5, rightLeg,
+              -0.5, rightKnee);
+    glPopMatrix();
+
+    glPopMatrix();
+
+}
+
+void createFinger(float xBase, float yBase, float zBase, int angleBase, float xrBack,
+                  float xUp, float yUp, float zUp, int angleUp)
+{
+    //Draw finger Base
+    glTranslatef(xBase, yBase, zBase);
+    glRotatef((GLfloat)angleBase, 0.0, 0.0, 1.0);
+    glTranslatef(xrBack, 0.0, 0.0);
+    glPushMatrix();
+    glScalef(0.2, 0.05, 0.05);
+    glutWireCube(1);
+    glPopMatrix();
+
+    //Draw finger Up
+    glTranslatef(xUp, yUp, zUp);
+    glRotatef((GLfloat)angleUp, 0.0, 0.0, 1.0);
+    glTranslatef(xUp, 0.0, 0.0);
+    glPushMatrix();
+    glScalef(2 * xUp, 0.05, 0.05);
+    glutWireCube(1);
+    glPopMatrix();
+}
+
+void createArm(float xShld, float yShld, float zShld,
+               float xElb, float yElb, float zElb,
+               float xFing, float yFing,
+               float zFing1, float zFing2, float zFing3, float zFing4, float zFing5,
+               float xrB, float xUp,
+               float xShldRotate, int ShldAngle,
+               float xElbRotate, int ElbAngle,
+               int baseAngle1, int upAngle1, int baseAngle2, int upAngle2,
+               int baseAngle3, int upAngle3, int baseAngle4, int upAngle4,
+               int baseAngle5, int upAngle5)
+{
+    // Shoulder
+    glTranslatef(xShld, yShld, zShld);
+    glTranslatef (-xShldRotate, 0.0, 0.0);
+    glRotatef ((GLfloat) ShldAngle, 0.0, 0.0, 1.0);
+    glTranslatef (xShldRotate, 0.0, 0.0);
+    glPushMatrix();
+    glScalef (1.0, 0.2, 0.5);
+    glutWireCube (1.0);
+    glPopMatrix();
+
+    // Elbow
+    glTranslatef (-xElbRotate, 0.0, 0.0);
+    glRotatef ((GLfloat) ElbAngle, 0.0, 0.0, 1.0);
+    glTranslatef (xElbRotate, 0.0, 0.0);
+    glPushMatrix();
+    glTranslatef(xElb, yElb, zElb);
+    glScalef (1.0, 0.2, 0.5);
+    glutWireCube (1.0);
+    glPopMatrix();
+
+    // Draw Finger 1
+    glPushMatrix();
+    createFinger(xFing, yFing, zFing1, baseAngle1, xrB, xUp, 0.0, 0.0, upAngle1);
+    glPopMatrix();
+
+    // Draw Finger 2
+    glPushMatrix();
+    createFinger(xFing, yFing, zFing2, baseAngle2, xrB, xUp, 0.0, 0.0, upAngle2);
+    glPopMatrix();
+
+    // Draw Finger 3
+    glPushMatrix();
+    createFinger(xFing, yFing, zFing3, baseAngle3, xrB, xUp, 0.0, 0.0, upAngle3);
+    glPopMatrix();
+
+    // Draw Finger 4
+    glPushMatrix();
+    createFinger(xFing, yFing, zFing4, baseAngle4, xrB, xUp, 0.0, 0.0, upAngle4);
+    glPopMatrix();
+
+    // Draw Finger 5
+    glPushMatrix();
+    createFinger(xFing, yFing-0.1 , zFing5, baseAngle5, xrB, xUp, 0.0, 0.0, upAngle5);
+    glPopMatrix();
+}
+
+void createLeg(float xUp, float yUp, float zUp,
+               float xLow, float yLow, float zLow,
+               float ylegRotate, int legAngle,
+               float yKneeRotate, int kneeAngle)
+{
+    // Upper Leg
+    glTranslatef(xUp, yUp, zUp);
+    glTranslatef (0.0, -ylegRotate, 0.0);
+    glRotatef ((GLfloat) legAngle, 1.0, 0.0, 0.0);
+    glTranslatef (0.0, ylegRotate, 0.0);
+    glPushMatrix();
+    glScalef (0.3, 1.0, 0.5);
+    glutWireCube (1.0);
+    glPopMatrix();
+
+    // Lower Leg
+    glTranslatef(xLow, yLow, zLow);
+    glTranslatef (0.0, -yKneeRotate, 0.0);
+    glRotatef ((GLfloat) kneeAngle, 1.0, 0.0, 0.0);
+    glTranslatef (0.0, yKneeRotate, 0.0);
+    glPushMatrix();
+    glScalef (0.3, 1.0, 0.5);
+    glutWireCube (1.0);
+    glPopMatrix();
+
+    // Bottom Leg
+    glPushMatrix();
+    glColor3f(1.0, 1.0, 1.0);
+    glTranslatef(0.0, -0.6, 0.20);
+    glScalef(0.3, 0.2, 1.0);
+    glutSolidCube(1.0);
+    glPopMatrix();
+}
+
+
+void reshape(int w, int h)
+{
+    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(65.0, (GLfloat)w / (GLfloat)h, 1.0, 20.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(0.0, 0.0, -5.0);
+}
+
+double *crossProduct(const double a[], const double b[])
+{
+    static double c[] = {};
+    c[0] = a[1] * b[2] - a[2] * b[1];
+    c[1] = a[2] * b[0] - a[0] * b[2];
+    c[2] = a[0] * b[1] - a[1] * b[0];
+    return c;
+}
+
+void normalize(double a[])
+{
+    double norm;
+    norm = a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
+    norm = sqrt(norm);
+    a[0] /= norm;
+    a[1] /= norm;
+    a[2] /= norm;
+}
+
+void rotatePoint(const double a[], double theta, double p[])
+{
+
+    double temp[3];
+    temp[0] = p[0];
+    temp[1] = p[1];
+    temp[2] = p[2];
+
+    temp[0] = -a[2] * p[1] + a[1] * p[2];
+    temp[1] = a[2] * p[0] - a[0] * p[2];
+    temp[2] = -a[1] * p[0] + a[0] * p[1];
+
+    temp[0] *= sin(theta);
+    temp[1] *= sin(theta);
+    temp[2] *= sin(theta);
+
+    temp[0] += (1 - cos(theta))*(a[0] * a[0] * p[0] + a[0] * a[1] * p[1] + a[0] * a[2] * p[2]);
+    temp[1] += (1 - cos(theta))*(a[0] * a[1] * p[0] + a[1] * a[1] * p[1] + a[1] * a[2] * p[2]);
+    temp[2] += (1 - cos(theta))*(a[0] * a[2] * p[0] + a[1] * a[2] * p[1] + a[2] * a[2] * p[2]);
+
+    temp[0] += cos(theta)*p[0];
+    temp[1] += cos(theta)*p[1];
+    temp[2] += cos(theta)*p[2];
+
+    p[0] = temp[0];
+    p[1] = temp[1];
+    p[2] = temp[2];
+
+}
+
+void Left()
+{
+    // implement camera rotation arround vertical window screen axis to the left
+    // used by mouse and left arrow
+    rotatePoint(up, -0.1, eye);
+}
+
+void Right()
+{
+    // implement camera rotation arround vertical window screen axis to the right
+    // used by mouse and right arrow
+    rotatePoint(up, 0.1, eye);
+}
+
+void Up()
+{
+    // implement camera rotation arround horizontal window screen axis +ve
+    // used by up arrow
+    double *h_direction;
+    h_direction = crossProduct(up, eye);
+    normalize(h_direction);
+
+    // Rotate the eye about the horizontal direction
+    rotatePoint(h_direction, 0.1, eye);
+
+    // Rotate the up vector about the horizontal direction
+    rotatePoint(h_direction, 0.1, up);
+
+}
+
+void Down()
+{
+    // implement camera rotation arround horizontal window screen axis
+    // used by down arrow
+    double *h_direction;
+    h_direction = crossProduct(up, eye);
+    normalize(h_direction);
+
+    // Rotate the eye about the horizontal direction
+    rotatePoint(h_direction, -0.1, eye);
+
+    // Rotate the up vector about the horizontal direction
+    rotatePoint(h_direction, -0.1, up);
+}
+
+void moveForward()
+{
+    direction[0] = center[0] - eye[0];
+    direction[1] = center[1] - eye[1];
+    direction[2] = center[2] - eye[2];
+    eye[0] += direction[0] * speed;
+    eye[1] += direction[1] * speed;
+    eye[2] += direction[2] * speed;
+    center[0] += direction[0] * speed;
+    center[1] += direction[1] * speed;
+    center[2] += direction[2] * speed;
+}
+
+void moveBack()
+{
+    direction[0] = center[0] - eye[0];
+    direction[1] = center[1] - eye[1];
+    direction[2] = center[2] - eye[2];
+    eye[0] -= direction[0] * speed;
+    eye[1] -= direction[1] * speed;
+    eye[2] -= direction[2] * speed;
+    center[0] -= direction[0] * speed;
+    center[1] -= direction[1] * speed;
+    center[2] -= direction[2] * speed;
+}
+
+void specialKeys(int key, int x, int y)
+{
+    switch (key)
+    {
+        case GLUT_KEY_LEFT:
+            Left();
+            break;
+        case GLUT_KEY_RIGHT:
+            Right();
+            break;
+        case GLUT_KEY_UP:
+            Up();
+            break;
+        case GLUT_KEY_DOWN:
+            Down();
+            break;
+        default:
+            break;
+    }
+
+    glutPostRedisplay();
+}
+
+
+void keyboard(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+        case '1':
+            moveForward();
+//            x += lx * fraction;
+//            z += lz * fraction;
+            break;
+        case '2':
+            moveBack();
+//            x -= lx * fraction;
+//            z -= lz * fraction;
+            break;
+
+            // Whole Body
+        case 'b':
+            mainBody = (mainBody - 5) % 360;
+            break;
+        case 'B':
+            mainBody = (mainBody + 5) % 360;
+            break;
+
+            // Left Shoulder
+        case 'r':
+            leftShoulder = (leftShoulder + 5) % 360;
+            break;
+        case 'R':
+            leftShoulder = (leftShoulder - 5) % 360;
+            break;
+
+            // Left Elbow
+        case 'f':
+            leftElbow = (leftElbow - 5) % 360;
+            break;
+        case 'F':
+            leftElbow = (leftElbow + 5) % 360;
+            break;
+
+            // Right Shoulder
+        case 'q':
+            rightShoulder = (rightShoulder - 5) % 360;
+            break;
+        case 'Q':
+            rightShoulder = (rightShoulder + 5) % 360;
+            break;
+
+            // Right Elbow
+        case 'a':
+            rightElbow = (rightElbow + 5) % 360;
+            break;
+        case 'A':
+            rightElbow = (rightElbow - 5) % 360;
+            break;
+
+            // Left Leg
+        case 'e':
+            leftLeg = (leftLeg - 5) % 360;
+            break;
+        case 'E':
+            leftLeg = (leftLeg + 5) % 360;
+            break;
+
+            // Left Knee
+        case 'd':
+            leftKnee = (leftKnee + 5) % 360;
+            break;
+        case 'D':
+            leftKnee = (leftKnee - 5) % 360;
+            break;
+
+
+            // Right Leg
+        case 'w':
+            rightLeg = (rightLeg - 5) % 360;
+            break;
+        case 'W':
+            rightLeg = (rightLeg + 5) % 360;
+            break;
+
+            // Right Knee
+        case 's':
+            rightKnee = (rightKnee + 5) % 360;
+            break;
+        case 'S':
+            rightKnee = (rightKnee - 5) % 360;
+            break;
+
+
+            // Left Finger 1 Control
+        case 't':
+            leftFingerBase1 = (leftFingerBase1 - 5) % 360;
+            break;
+        case 'T':
+            leftFingerBase1 = (leftFingerBase1 + 5) % 360;
+            break;
+        case 'y':
+            leftFingerUp1 = (leftFingerUp1 - 5) % 360;
+            break;
+        case 'Y':
+            leftFingerUp1 = (leftFingerUp1 + 5) % 360;
+            break;
+
+            // Left Finger 2 Control
+        case 'u':
+            leftFingerBase2 = (leftFingerBase2 - 5) % 360;
+            break;
+        case 'U':
+            leftFingerBase2 = (leftFingerBase2 + 5) % 360;
+            break;
+        case 'i':
+            leftFingerUp2 = (leftFingerUp2 - 5) % 360;
+            break;
+        case 'I':
+            leftFingerUp2 = (leftFingerUp2 + 5) % 360;
+            break;
+
+            // Left Finger 3 Control
+        case 'o':
+            leftFingerBase3 = (leftFingerBase3 - 5) % 360;
+            break;
+        case 'O':
+            leftFingerBase3 = (leftFingerBase3 + 5) % 360;
+            break;
+        case 'p':
+            leftFingerUp3 = (leftFingerUp3 - 5) % 360;
+            break;
+        case 'P':
+            leftFingerUp3 = (leftFingerUp3 + 5) % 360;
+            break;
+
+            // Left Finger 4 Control
+        case 'g':
+            leftFingerBase4 = (leftFingerBase4 - 5) % 360;
+            break;
+        case 'G':
+            leftFingerBase4 = (leftFingerBase4 + 5) % 360;
+            break;
+        case 'h':
+            leftFingerUp4 = (leftFingerUp4 - 5) % 360;
+            break;
+        case 'H':
+            leftFingerUp4 = (leftFingerUp4 + 5) % 360;
+            break;
+
+            // Left Finger 5 Control
+        case 'j':
+            leftFingerBase5 = (leftFingerBase5 - 5) % 360;
+            break;
+        case 'J':
+            leftFingerBase5 = (leftFingerBase5 + 5) % 360;
+            break;
+        case 'k':
+            leftFingerUp5 = (leftFingerUp5 - 5) % 360;
+            break;
+        case 'K':
+            leftFingerUp5 = (leftFingerUp5 + 5) % 360;
+            break;
+
+
+            // Right Finger 1 Control
+        case 'z':
+            rightFingerBase1 = (rightFingerBase1 - 5) % 360;
+            break;
+        case 'Z':
+            rightFingerBase1 = (rightFingerBase1 + 5) % 360;
+            break;
+        case 'x':
+            rightFingerUp1 = (rightFingerUp1 - 5) % 360;
+            break;
+        case 'X':
+            rightFingerUp1 = (rightFingerUp1 + 5) % 360;
+            break;
+
+            // Left Finger 2 Control
+        case 'c':
+            rightFingerBase2 = (rightFingerBase2 - 5) % 360;
+            break;
+        case 'C':
+            rightFingerBase2 = (rightFingerBase2 + 5) % 360;
+            break;
+        case 'v':
+            rightFingerUp2 = (rightFingerUp2 - 5) % 360;
+            break;
+        case 'V':
+            rightFingerUp2 = (rightFingerUp2 + 5) % 360;
+            break;
+
+            // Left Finger 3 Control
+        case 'n':
+            rightFingerBase3 = (rightFingerBase3 - 5) % 360;
+            break;
+        case 'N':
+            rightFingerBase3 = (rightFingerBase3 + 5) % 360;
+            break;
+        case 'm':
+            rightFingerUp3 = (rightFingerUp3 - 5) % 360;
+            break;
+        case 'M':
+            rightFingerUp3 = (rightFingerUp3 + 5) % 360;
+            break;
+
+            // Left Finger 4 Control
+        case '[':
+            rightFingerBase4 = (rightFingerBase4 - 5) % 360;
+            break;
+        case '{':
+            rightFingerBase4 = (rightFingerBase4 + 5) % 360;
+            break;
+        case ']':
+            rightFingerUp4 = (rightFingerUp4 - 5) % 360;
+            break;
+        case '}':
+            rightFingerUp4 = (rightFingerUp4 + 5) % 360;
+            break;
+
+            // Left Finger 5 Control
+        case ';':
+            rightFingerBase5 = (rightFingerBase5 - 5) % 360;
+            break;
+        case ':':
+            rightFingerBase5 = (rightFingerBase5 + 5) % 360;
+            break;
+        case '/':
+            rightFingerUp5 = (rightFingerUp5 - 5) % 360;
+            break;
+        case '?':
+            rightFingerUp5 = (rightFingerUp5 + 5) % 360;
+            break;
+
+        case 27:
+            exit(0);
+        default:
+            break;
+
+    }
+    glutPostRedisplay();
+}
+
+static void mouse(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON)
+    {
+        if (state == GLUT_DOWN)
+        {
+            moving = 1;
+            startx = x;
+        }
+        if (state == GLUT_UP) {
+            moving = 0;
+        }
+    }
+}
+
+static void motion(int x, int y)
+{
+    if (moving)
+    {
+        angle = (x - startx) / 25.0;
+        rotatePoint(up, angle, eye);
+        startx = x;
+        glutPostRedisplay();
+    }
+
+}
+
