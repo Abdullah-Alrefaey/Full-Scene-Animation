@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include <cstdlib>
 #include <cmath>
+#include <iostream>
 using namespace std;
 
 static int mainBody = 0;
@@ -18,10 +19,17 @@ static int leftFingerUp1 = 0, leftFingerUp2  = 0, leftFingerUp3 = 0, leftFingerU
 static int rightFingerBase1 = 0, rightFingerBase2 = 0, rightFingerBase3 = 0, rightFingerBase4 = 0, rightFingerBase5 = 0;
 static int rightFingerUp1 = 0, rightFingerUp2  = 0, rightFingerUp3 = 0, rightFingerUp4 = 0, rightFingerUp5 = 0;
 
+// Variables for Jumping Distance
+static double jumpOffset = 0;
+
+// If state = 1 -> jumping to up
+// If state = -1 -> returning to ground
+static int state = 1;
+
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
 
-double eye[] = { 0, 0, 6 };
+double eye[] = { 0, 0, 10 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
 double direction[3];
@@ -33,6 +41,8 @@ void reshape(int w, int h);
 void keyboard(unsigned char key, int x, int y);
 static void mouse(int button, int state, int x, int y);
 static void motion(int x, int y);
+
+void createFloor();
 void createFullBody();
 void createFinger(float xBase, float yBase, float zBase, int angleBase, float xrBack,
                   float xUp, float yUp, float zUp, int angleUp);
@@ -64,14 +74,15 @@ void Down();
 void moveForward();
 void moveBack();
 void specialKeys(int key, int x, int y);
+void jump(int value);
 
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(900, 600);
-    glutInitWindowPosition(100, 100);
-    glutCreateWindow("Robot Body");
+    glutInitWindowSize(800, 800);
+    glutInitWindowPosition(100, 10);
+    glutCreateWindow("Animation Of Full Scene");
     init();
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
@@ -101,6 +112,7 @@ void display()
               center[0], center[1], center[2],
               up[0], up[1], up[2]);
 
+//    createFloor();
     createFullBody();
     glutSwapBuffers();
 }
@@ -108,72 +120,82 @@ void display()
 void createFullBody()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-
     glPushMatrix();
 
-    // Draw The Head
-    glTranslatef (-1.0, 0.0, 0.0);
-    glRotatef ((GLfloat) mainBody, 0.0, 1.0, 0.0);
-    glTranslatef (1.0, 0.0, 0.0);
-    glPushMatrix();
-    glTranslatef(0.0, 2.00, 0.0);
-    glutWireSphere(0.3, 20, 20);
-    glPopMatrix();
+        // Draw The Floor
+        glPushMatrix();
+            glTranslatef(-1.0, 0.0, 0.0);
+            glRotatef(90, 1.0, 0.0, 0.0);
+            glTranslatef(1.0, 0.0, 0.0);
+            glTranslatef(0.0, 0.0, 2.5);
+            glScalef(5.0, 5.0, 0.1);
+            glutWireCube(1.0);
+        glPopMatrix();
 
-    // Draw The Body
-    glPushMatrix();
-    glTranslatef(0.0, 0.70, 0.0);
-    glScalef(1.2, 2.0, 0.5);
-    glutWireCube(1.0);
-    glPopMatrix();
+        glTranslatef(0.0, jumpOffset, 0.0);
+        // Draw The Head
+        glTranslatef (-1.0, 0.0, 0.0);
+        glRotatef ((GLfloat) mainBody, 0.0, 1.0, 0.0);
+        glTranslatef (1.0, 0.0, 0.0);
+        glPushMatrix();
+            glTranslatef(0.0, 2.00, 0.0);
+            glutWireSphere(0.3, 20, 20);
+        glPopMatrix();
 
-    // Draw Left Arm
-    glPushMatrix();
-    createArm(1.3, 1.5, 0.0,
-              1.0, 0.0, 0.0,
-              1.5, 0.05,
-              0.2, 0.1, 0.0, -0.1, -0.1,
-              0.1, 0.1,
-              0.5, leftShoulder,
-              -0.5, leftElbow,
-              leftFingerBase1, leftFingerUp1,
-              leftFingerBase2, leftFingerUp2,
-              leftFingerBase3, leftFingerUp3,
-              leftFingerBase4, leftFingerUp4,
-              leftFingerBase5, leftFingerUp5);
-    glPopMatrix();
+        // Draw The Body
+        glPushMatrix();
+            glTranslatef(0.0, 0.70, 0.0);
+            glScalef(1.2, 2.0, 0.5);
+            glutWireCube(1.0);
+        glPopMatrix();
 
-    // Draw Right Arm
-    glPushMatrix();
-    createArm(-1.3, 1.5, 0.0,
-              -1.0, 0.0, 0.0,
-              -1.5, 0.05,
-              0.2, 0.1, 0.0, -0.1, -0.1,
-              -0.1, -0.1,
-              -0.5, rightShoulder,
-              0.5, rightElbow,
-              rightFingerBase1, rightFingerUp1,
-              rightFingerBase2, rightFingerUp2,
-              rightFingerBase3, rightFingerUp3,
-              rightFingerBase4, rightFingerUp4,
-              rightFingerBase5, rightFingerUp5);
-    glPopMatrix();
+        // Draw Left Arm
+        glPushMatrix();
+            createArm(1.3, 1.5, 0.0,
+                      1.0, 0.0, 0.0,
+                      1.5, 0.05,
+                      0.2, 0.1, 0.0, -0.1, -0.1,
+                      0.1, 0.1,
+                      0.5, leftShoulder,
+                      -0.5, leftElbow,
+                      leftFingerBase1, leftFingerUp1,
+                      leftFingerBase2, leftFingerUp2,
+                      leftFingerBase3, leftFingerUp3,
+                      leftFingerBase4, leftFingerUp4,
+                      leftFingerBase5, leftFingerUp5);
+        glPopMatrix();
 
-    // Draw Left Leg
-    glPushMatrix();
-    createLeg(0.45, -0.8, 0.0,
-              0.0, -1.0, 0.0,
-              -0.5, leftLeg,
-              -0.5, leftKnee);
-    glPopMatrix();
+        // Draw Right Arm
+        glPushMatrix();
+            createArm(-1.3, 1.5, 0.0,
+                      -1.0, 0.0, 0.0,
+                      -1.5, 0.05,
+                      0.2, 0.1, 0.0, -0.1, -0.1,
+                      -0.1, -0.1,
+                      -0.5, rightShoulder,
+                      0.5, rightElbow,
+                      rightFingerBase1, rightFingerUp1,
+                      rightFingerBase2, rightFingerUp2,
+                      rightFingerBase3, rightFingerUp3,
+                      rightFingerBase4, rightFingerUp4,
+                      rightFingerBase5, rightFingerUp5);
+        glPopMatrix();
 
-    // Draw Right Leg
-    glPushMatrix();
-    createLeg(-0.45, -0.8, 0.0,
-              0.0, -1.0, 0.0,
-              -0.5, rightLeg,
-              -0.5, rightKnee);
-    glPopMatrix();
+        // Draw Left Leg
+        glPushMatrix();
+            createLeg(0.45, -0.8, 0.0,
+                      0.0, -1.0, 0.0,
+                      -0.5, leftLeg,
+                      -0.5, leftKnee);
+        glPopMatrix();
+
+        // Draw Right Leg
+        glPushMatrix();
+            createLeg(-0.45, -0.8, 0.0,
+                      0.0, -1.0, 0.0,
+                      -0.5, rightLeg,
+                      -0.5, rightKnee);
+        glPopMatrix();
 
     glPopMatrix();
 
@@ -187,8 +209,8 @@ void createFinger(float xBase, float yBase, float zBase, int angleBase, float xr
     glRotatef((GLfloat)angleBase, 0.0, 0.0, 1.0);
     glTranslatef(xrBack, 0.0, 0.0);
     glPushMatrix();
-    glScalef(0.2, 0.05, 0.05);
-    glutWireCube(1);
+        glScalef(0.2, 0.05, 0.05);
+        glutWireCube(1);
     glPopMatrix();
 
     //Draw finger Up
@@ -196,8 +218,8 @@ void createFinger(float xBase, float yBase, float zBase, int angleBase, float xr
     glRotatef((GLfloat)angleUp, 0.0, 0.0, 1.0);
     glTranslatef(xUp, 0.0, 0.0);
     glPushMatrix();
-    glScalef(2 * xUp, 0.05, 0.05);
-    glutWireCube(1);
+        glScalef(2 * xUp, 0.05, 0.05);
+        glutWireCube(1);
     glPopMatrix();
 }
 
@@ -218,8 +240,8 @@ void createArm(float xShld, float yShld, float zShld,
     glRotatef ((GLfloat) ShldAngle, 0.0, 0.0, 1.0);
     glTranslatef (xShldRotate, 0.0, 0.0);
     glPushMatrix();
-    glScalef (1.0, 0.2, 0.5);
-    glutWireCube (1.0);
+        glScalef (1.0, 0.2, 0.5);
+        glutWireCube (1.0);
     glPopMatrix();
 
     // Elbow
@@ -227,34 +249,34 @@ void createArm(float xShld, float yShld, float zShld,
     glRotatef ((GLfloat) ElbAngle, 0.0, 0.0, 1.0);
     glTranslatef (xElbRotate, 0.0, 0.0);
     glPushMatrix();
-    glTranslatef(xElb, yElb, zElb);
-    glScalef (1.0, 0.2, 0.5);
-    glutWireCube (1.0);
+        glTranslatef(xElb, yElb, zElb);
+        glScalef (1.0, 0.2, 0.5);
+        glutWireCube (1.0);
     glPopMatrix();
 
     // Draw Finger 1
     glPushMatrix();
-    createFinger(xFing, yFing, zFing1, baseAngle1, xrB, xUp, 0.0, 0.0, upAngle1);
+        createFinger(xFing, yFing, zFing1, baseAngle1, xrB, xUp, 0.0, 0.0, upAngle1);
     glPopMatrix();
 
     // Draw Finger 2
     glPushMatrix();
-    createFinger(xFing, yFing, zFing2, baseAngle2, xrB, xUp, 0.0, 0.0, upAngle2);
+        createFinger(xFing, yFing, zFing2, baseAngle2, xrB, xUp, 0.0, 0.0, upAngle2);
     glPopMatrix();
 
     // Draw Finger 3
     glPushMatrix();
-    createFinger(xFing, yFing, zFing3, baseAngle3, xrB, xUp, 0.0, 0.0, upAngle3);
+        createFinger(xFing, yFing, zFing3, baseAngle3, xrB, xUp, 0.0, 0.0, upAngle3);
     glPopMatrix();
 
     // Draw Finger 4
     glPushMatrix();
-    createFinger(xFing, yFing, zFing4, baseAngle4, xrB, xUp, 0.0, 0.0, upAngle4);
+        createFinger(xFing, yFing, zFing4, baseAngle4, xrB, xUp, 0.0, 0.0, upAngle4);
     glPopMatrix();
 
     // Draw Finger 5
     glPushMatrix();
-    createFinger(xFing, yFing-0.1 , zFing5, baseAngle5, xrB, xUp, 0.0, 0.0, upAngle5);
+        createFinger(xFing, yFing-0.1 , zFing5, baseAngle5, xrB, xUp, 0.0, 0.0, upAngle5);
     glPopMatrix();
 }
 
@@ -269,8 +291,8 @@ void createLeg(float xUp, float yUp, float zUp,
     glRotatef ((GLfloat) legAngle, 1.0, 0.0, 0.0);
     glTranslatef (0.0, ylegRotate, 0.0);
     glPushMatrix();
-    glScalef (0.3, 1.0, 0.5);
-    glutWireCube (1.0);
+        glScalef (0.3, 1.0, 0.5);
+        glutWireCube (1.0);
     glPopMatrix();
 
     // Lower Leg
@@ -279,16 +301,16 @@ void createLeg(float xUp, float yUp, float zUp,
     glRotatef ((GLfloat) kneeAngle, 1.0, 0.0, 0.0);
     glTranslatef (0.0, yKneeRotate, 0.0);
     glPushMatrix();
-    glScalef (0.3, 1.0, 0.5);
-    glutWireCube (1.0);
+        glScalef (0.3, 1.0, 0.5);
+        glutWireCube (1.0);
     glPopMatrix();
 
     // Bottom Leg
     glPushMatrix();
-    glColor3f(1.0, 1.0, 1.0);
-    glTranslatef(0.0, -0.6, 0.20);
-    glScalef(0.3, 0.2, 1.0);
-    glutSolidCube(1.0);
+        glColor3f(1.0, 1.0, 1.0);
+        glTranslatef(0.0, -0.6, 0.20);
+        glScalef(0.3, 0.2, 1.0);
+        glutWireCube(1.0);
     glPopMatrix();
 }
 
@@ -448,22 +470,60 @@ void specialKeys(int key, int x, int y)
 }
 
 
+void jump(int heightValue)
+{
+    switch (state)
+    {
+        // Jumping
+        case 1:
+            if (jumpOffset < heightValue) {
+                jumpOffset += 0.05;
+            } else {
+                state = -1;
+            }
+            glutTimerFunc(1000/60, jump, heightValue);
+            break;
+
+        // Returning to ground
+        case -1:
+            if(jumpOffset > 0) {
+                jumpOffset -= 0.05;
+            } else if (jumpOffset < 0) {
+                state = 0;
+            }
+            glutTimerFunc(1000/60, jump, heightValue);
+            break;
+
+        // Returned to ground
+        case 0:
+            state = 1;
+            break;
+
+        default:
+            break;
+    }
+    glutPostRedisplay();
+}
+
+
 void keyboard(unsigned char key, int x, int y)
 {
     switch (key)
     {
+
+        // Jump Case
+        case ' ':
+            jump(2);
+            break;
+
         case '1':
             moveForward();
-//            x += lx * fraction;
-//            z += lz * fraction;
             break;
         case '2':
             moveBack();
-//            x -= lx * fraction;
-//            z -= lz * fraction;
             break;
 
-            // Whole Body
+        // Whole Body
         case 'b':
             mainBody = (mainBody - 5) % 360;
             break;
@@ -471,7 +531,7 @@ void keyboard(unsigned char key, int x, int y)
             mainBody = (mainBody + 5) % 360;
             break;
 
-            // Left Shoulder
+        // Left Shoulder
         case 'r':
             leftShoulder = (leftShoulder + 5) % 360;
             break;
@@ -479,7 +539,7 @@ void keyboard(unsigned char key, int x, int y)
             leftShoulder = (leftShoulder - 5) % 360;
             break;
 
-            // Left Elbow
+        // Left Elbow
         case 'f':
             leftElbow = (leftElbow - 5) % 360;
             break;
@@ -487,7 +547,7 @@ void keyboard(unsigned char key, int x, int y)
             leftElbow = (leftElbow + 5) % 360;
             break;
 
-            // Right Shoulder
+        // Right Shoulder
         case 'q':
             rightShoulder = (rightShoulder - 5) % 360;
             break;
@@ -495,7 +555,7 @@ void keyboard(unsigned char key, int x, int y)
             rightShoulder = (rightShoulder + 5) % 360;
             break;
 
-            // Right Elbow
+        // Right Elbow
         case 'a':
             rightElbow = (rightElbow + 5) % 360;
             break;
@@ -503,7 +563,7 @@ void keyboard(unsigned char key, int x, int y)
             rightElbow = (rightElbow - 5) % 360;
             break;
 
-            // Left Leg
+        // Left Leg
         case 'e':
             leftLeg = (leftLeg - 5) % 360;
             break;
@@ -511,7 +571,7 @@ void keyboard(unsigned char key, int x, int y)
             leftLeg = (leftLeg + 5) % 360;
             break;
 
-            // Left Knee
+        // Left Knee
         case 'd':
             leftKnee = (leftKnee + 5) % 360;
             break;
@@ -520,7 +580,7 @@ void keyboard(unsigned char key, int x, int y)
             break;
 
 
-            // Right Leg
+        // Right Leg
         case 'w':
             rightLeg = (rightLeg - 5) % 360;
             break;
@@ -528,7 +588,7 @@ void keyboard(unsigned char key, int x, int y)
             rightLeg = (rightLeg + 5) % 360;
             break;
 
-            // Right Knee
+        // Right Knee
         case 's':
             rightKnee = (rightKnee + 5) % 360;
             break;
@@ -537,7 +597,7 @@ void keyboard(unsigned char key, int x, int y)
             break;
 
 
-            // Left Finger 1 Control
+        // Left Finger 1 Control
         case 't':
             leftFingerBase1 = (leftFingerBase1 - 5) % 360;
             break;
@@ -551,7 +611,7 @@ void keyboard(unsigned char key, int x, int y)
             leftFingerUp1 = (leftFingerUp1 + 5) % 360;
             break;
 
-            // Left Finger 2 Control
+        // Left Finger 2 Control
         case 'u':
             leftFingerBase2 = (leftFingerBase2 - 5) % 360;
             break;
@@ -565,7 +625,7 @@ void keyboard(unsigned char key, int x, int y)
             leftFingerUp2 = (leftFingerUp2 + 5) % 360;
             break;
 
-            // Left Finger 3 Control
+        // Left Finger 3 Control
         case 'o':
             leftFingerBase3 = (leftFingerBase3 - 5) % 360;
             break;
@@ -579,7 +639,7 @@ void keyboard(unsigned char key, int x, int y)
             leftFingerUp3 = (leftFingerUp3 + 5) % 360;
             break;
 
-            // Left Finger 4 Control
+        // Left Finger 4 Control
         case 'g':
             leftFingerBase4 = (leftFingerBase4 - 5) % 360;
             break;
@@ -593,7 +653,7 @@ void keyboard(unsigned char key, int x, int y)
             leftFingerUp4 = (leftFingerUp4 + 5) % 360;
             break;
 
-            // Left Finger 5 Control
+        // Left Finger 5 Control
         case 'j':
             leftFingerBase5 = (leftFingerBase5 - 5) % 360;
             break;
@@ -608,7 +668,7 @@ void keyboard(unsigned char key, int x, int y)
             break;
 
 
-            // Right Finger 1 Control
+        // Right Finger 1 Control
         case 'z':
             rightFingerBase1 = (rightFingerBase1 - 5) % 360;
             break;
@@ -622,7 +682,7 @@ void keyboard(unsigned char key, int x, int y)
             rightFingerUp1 = (rightFingerUp1 + 5) % 360;
             break;
 
-            // Left Finger 2 Control
+        // Left Finger 2 Control
         case 'c':
             rightFingerBase2 = (rightFingerBase2 - 5) % 360;
             break;
@@ -636,7 +696,7 @@ void keyboard(unsigned char key, int x, int y)
             rightFingerUp2 = (rightFingerUp2 + 5) % 360;
             break;
 
-            // Left Finger 3 Control
+        // Left Finger 3 Control
         case 'n':
             rightFingerBase3 = (rightFingerBase3 - 5) % 360;
             break;
@@ -650,7 +710,7 @@ void keyboard(unsigned char key, int x, int y)
             rightFingerUp3 = (rightFingerUp3 + 5) % 360;
             break;
 
-            // Left Finger 4 Control
+        // Left Finger 4 Control
         case '[':
             rightFingerBase4 = (rightFingerBase4 - 5) % 360;
             break;
@@ -664,7 +724,7 @@ void keyboard(unsigned char key, int x, int y)
             rightFingerUp4 = (rightFingerUp4 + 5) % 360;
             break;
 
-            // Left Finger 5 Control
+        // Left Finger 5 Control
         case ';':
             rightFingerBase5 = (rightFingerBase5 - 5) % 360;
             break;
@@ -713,4 +773,6 @@ static void motion(int x, int y)
     }
 
 }
+
+
 
