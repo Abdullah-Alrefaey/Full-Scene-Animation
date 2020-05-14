@@ -750,10 +750,12 @@ void keyboard(unsigned char key, int x, int y)
 
         // Left Elbow
         case 'f':
-            leftElbow = (leftElbow - 5) % 360;
+        if(leftElbow>-120)
+            leftElbow-=5;
             break;
         case 'F':
-            leftElbow = (leftElbow + 5) % 360;
+           if(leftElbow < 0)
+           leftElbow+=5;
             break;
 
         // Right Shoulder
@@ -769,10 +771,12 @@ void keyboard(unsigned char key, int x, int y)
 
         // Right Elbow
         case 'a':
-            rightElbow = (rightElbow + 5) % 360;
+           if(rightElbow<120)
+            rightElbow+=5;
             break;
         case 'A':
-            rightElbow = (rightElbow - 5) % 360;
+        if(rightElbow > 0)
+           rightElbow-=5;
             break;
 
         // Left Leg
