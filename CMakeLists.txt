@@ -36,6 +36,8 @@ if (WIN32)
     endif(NOT OPENGL_FOUND)
 
     link_libraries(${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} --verbose)
+    configure_file(1.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
+    configure_file(1_DIFFUSE.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp)
 
 endif ()
