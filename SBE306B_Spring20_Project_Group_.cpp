@@ -21,15 +21,17 @@ static int rightFingerUp1 = 0, rightFingerUp2  = 0, rightFingerUp3 = 0, rightFin
 
 // Variables for Jumping Distance
 static double jumpOffset = 0;
+static double forwardOffset = 0;
 
 // If state = 1 -> jumping to up
 // If state = -1 -> returning to ground
 static int state = 1;
+static int LegState = 1;
 
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
 
-double eye[] = { 0, 0, 10 };
+double eye[] = { 3, 3, 10 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
 double direction[3];
@@ -75,6 +77,8 @@ void moveForward();
 void moveBack();
 void specialKeys(int key, int x, int y);
 void jump(int value);
+void walkForward(int value);
+void jumpOver(int value);
 
 int main(int argc, char **argv)
 {
@@ -98,7 +102,10 @@ int main(int argc, char **argv)
 void init()
 {
     glMatrixMode(GL_PROJECTION);
-    gluPerspective(65.0, (GLfloat)1024 / (GLfloat)869, 1.0, 60.0);
+    glLoadIdentity();
+    double w = glutGet( GLUT_WINDOW_WIDTH );
+    double h = glutGet( GLUT_WINDOW_HEIGHT );
+    gluPerspective(65.0, (GLdouble)w / (GLdouble)h, 1.0, 600.0);
 }
 
 void display()
@@ -128,12 +135,16 @@ void createFullBody()
             glRotatef(90, 1.0, 0.0, 0.0);
             glTranslatef(1.0, 0.0, 0.0);
             glTranslatef(0.0, 0.0, 2.5);
-            glScalef(5.0, 5.0, 0.1);
+            glScalef(10.0, 10.0, 0.1);
             glutWireCube(1.0);
         glPopMatrix();
 
-        glTranslatef(0.0, jumpOffset, 0.0);
+        // The Translation Movement For the Whole Body
+        glTranslatef(forwardOffset, jumpOffset, 0.0);
+        glRotatef(90, 0.0, 1.0, 0.0);
+
         // Draw The Head
+        glTranslatef (0.0, 0.0, -2.0);
         glTranslatef (-1.0, 0.0, 0.0);
         glRotatef ((GLfloat) mainBody, 0.0, 1.0, 0.0);
         glTranslatef (1.0, 0.0, 0.0);
@@ -478,6 +489,10 @@ void jump(int heightValue)
         case 1:
             if (jumpOffset < heightValue) {
                 jumpOffset += 0.05;
+                leftShoulder += 1;
+                rightShoulder -= 1;
+                leftKnee += 1;
+                rightKnee += 1;
             } else {
                 state = -1;
             }
@@ -488,6 +503,10 @@ void jump(int heightValue)
         case -1:
             if(jumpOffset > 0) {
                 jumpOffset -= 0.05;
+                leftShoulder -= 1;
+                rightShoulder += 1;
+                leftKnee -= 1;
+                rightKnee -= 1;
             } else if (jumpOffset < 0) {
                 state = 0;
             }
@@ -505,6 +524,110 @@ void jump(int heightValue)
     glutPostRedisplay();
 }
 
+void walkForward(int value)
+{
+    /*
+     * LegState 1: Moving The Right Leg and Knee
+     * LegState 2: Finished Moving The Right Leg and Knee
+     *             And Start Moving in x-direction
+     *
+     */
+    switch (LegState)
+    {
+        case 1:
+            cout<<"LegState: "<<LegState<<" Right Leg: "<<rightLeg;
+            cout<<" Left Leg: "<<leftLeg<<endl;
+            if (rightLeg > -30) {
+                rightLeg = (rightLeg - 1) % 360;
+                rightKnee = (rightKnee + 1) % 360;
+            } else {
+                LegState = 2;
+            }
+            glutTimerFunc(1000/60, walkForward, 0);
+            break;
+
+        case 2:
+            cout<<"LegState: "<<LegState<<"  Right Leg: "<<rightLeg;
+            cout<<" Left Leg: "<<leftLeg<<endl;
+            if (leftLeg > -30) {
+                leftLeg = (leftLeg - 1) % 360;
+                leftKnee = (leftKnee + 1) % 360;
+                rightLeg = (rightLeg + 1) % 360;
+                rightKnee = (rightKnee - 1) % 360;
+                forwardOffset += 0.02;
+            }
+            else {
+                LegState = 3;
+            }
+            glutTimerFunc(1000/60, walkForward, 0);
+            break;
+
+        case 3:
+            if (leftLeg < 0)
+            {
+                leftLeg = (leftLeg + 1) % 360;
+                leftKnee = (leftKnee - 1) % 360;
+            } else {
+                LegState = 0;
+            }
+            glutTimerFunc(1000/60, walkForward, 0);
+            break;
+
+        case 0:
+            LegState = 1;
+            break;
+
+        default:
+            break;
+
+    }
+    glutPostRedisplay();
+}
+
+void jumpOver(int heightValue)
+{
+    switch (state)
+    {
+        // Jumping
+        case 1:
+            if (jumpOffset < heightValue) {
+                jumpOffset += 0.05;
+                forwardOffset += 0.025;
+                leftShoulder += 1;
+                rightShoulder -= 1;
+                leftKnee += 1;
+                rightKnee += 1;
+            } else {
+                state = -1;
+            }
+            glutTimerFunc(1000/60, jumpOver, heightValue);
+            break;
+
+            // Returning to ground
+        case -1:
+            if(jumpOffset > 0) {
+                jumpOffset -= 0.05;
+                forwardOffset += 0.025;
+                leftShoulder -= 1;
+                rightShoulder += 1;
+                leftKnee -= 1;
+                rightKnee -= 1;
+            } else if (jumpOffset < 0) {
+                state = 0;
+            }
+            glutTimerFunc(1000/60, jumpOver, heightValue);
+            break;
+
+            // Returned to ground
+        case 0:
+            state = 1;
+            break;
+
+        default:
+            break;
+    }
+    glutPostRedisplay();
+}
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -514,6 +637,15 @@ void keyboard(unsigned char key, int x, int y)
         // Jump Case
         case ' ':
             jump(2);
+            break;
+
+        // walkForward Case
+        case '3':
+            walkForward(0);
+            break;
+
+        case '4':
+            jumpOver(2);
             break;
 
         case '1':
