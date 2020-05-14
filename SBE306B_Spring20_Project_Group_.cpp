@@ -2,6 +2,8 @@
 // Created by Abdullah-Mohammed on 12-May-20.
 //
 
+
+
 #include <GL/glut.h>
 #include <cstdlib>
 #include <cmath>
@@ -17,8 +19,8 @@ using namespace std;
 static int mainBody = 0;
 static int leftShoulder = -90, rightShoulder = 90;
 static int leftElbow = 0, rightElbow = 0;
-static int leftLeg = 0, rightLeg = 0;
-static int leftKnee = 0, rightKnee = 0;
+static signed int leftLeg = 0, rightLeg = 0;
+static signed int leftKnee = 0, rightKnee = 0;
 static int leftFingerBase1 = 0, leftFingerBase2 = 0, leftFingerBase3 = 0, leftFingerBase4 = 0, leftFingerBase5 = 0;
 static int leftFingerUp1 = 0, leftFingerUp2  = 0, leftFingerUp3 = 0, leftFingerUp4 = 0, leftFingerUp5 = 0;
 
@@ -33,6 +35,7 @@ static double forwardOffset = 0;
 // If state = -1 -> returning to ground
 static int state = 1;
 static int LegState = 1;
+static int kick_state = 1;
 
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
@@ -639,6 +642,59 @@ void jumpOver(int heightValue)
     }
     glutPostRedisplay();
 }
+void kick(int value){
+    switch (kick_state)
+    {
+    case 1:
+        if(rightKnee < 45)
+        {
+        rightLeg+=1;
+        rightKnee+=1;
+        }
+        else
+        {
+            kick_state=-1;
+        }     
+        glutTimerFunc(10, kick,1);
+        break;
+    case -1 :
+        if(rightLeg > -15)
+        {
+        rightLeg-=1;
+        if (rightKnee >0)
+        {
+            rightKnee-=1;
+            
+        }
+        
+        }
+        else if(rightLeg == -15)
+        {
+            //z_sphere is the z coordinate for the sphere or ball object
+            // if(z_sphere < 5){
+            //     z_sphere +=.1;
+            // }
+            // else
+            // {
+            //     kick_state=0;
+            // }
+            kick_state=0;
+            
+        }
+        glutTimerFunc(10, kick,1);
+        break;
+
+    case 0:    
+        kick_state=1;
+        break;    
+
+    default:
+        break;
+    }
+    glutPostRedisplay();
+
+}
+
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -654,6 +710,14 @@ void keyboard(unsigned char key, int x, int y)
         case '3':
             walkForward(0);
             break;
+        // kick Case
+        case 'l':
+            //z_sphere=1.6;
+            kick_state=1;
+            rightKnee=0;
+            rightLeg=0;
+            kick(1);
+            break;       
 
         case '4':
             jumpOver(2);
@@ -674,12 +738,14 @@ void keyboard(unsigned char key, int x, int y)
             mainBody = (mainBody + 5) % 360;
             break;
 
-        // Left Shoulder
+       // Left Shoulder
         case 'r':
-            leftShoulder = (leftShoulder + 5) % 360;
+            if(leftShoulder < 90)
+                leftShoulder+=5;
             break;
         case 'R':
-            leftShoulder = (leftShoulder - 5) % 360;
+          if(leftShoulder > -90)
+                leftShoulder-=5;
             break;
 
         // Left Elbow
@@ -692,10 +758,13 @@ void keyboard(unsigned char key, int x, int y)
 
         // Right Shoulder
         case 'q':
-            rightShoulder = (rightShoulder - 5) % 360;
+                if(rightShoulder > -90)
+                rightShoulder-=5;
+            
             break;
         case 'Q':
-            rightShoulder = (rightShoulder + 5) % 360;
+            if(rightShoulder < 90)
+                rightShoulder+=5;
             break;
 
         // Right Elbow
@@ -708,35 +777,43 @@ void keyboard(unsigned char key, int x, int y)
 
         // Left Leg
         case 'e':
-            leftLeg = (leftLeg - 5) % 360;
+            if(leftLeg > -90)
+                leftLeg-=5;
             break;
         case 'E':
-            leftLeg = (leftLeg + 5) % 360;
+            if(leftLeg < 75)
+                leftLeg+=5;
             break;
 
         // Left Knee
         case 'd':
-            leftKnee = (leftKnee + 5) % 360;
+            if(leftKnee <90)
+            leftKnee+=5;
             break;
         case 'D':
-            leftKnee = (leftKnee - 5) % 360;
+            if(leftKnee >0)
+            leftKnee-=5;
             break;
 
 
         // Right Leg
         case 'w':
-            rightLeg = (rightLeg - 5) % 360;
+            if(rightLeg > -90)
+                rightLeg-=5;
             break;
         case 'W':
-            rightLeg = (rightLeg + 5) % 360;
+            if(rightLeg < 75)
+                rightLeg+=5;
             break;
 
         // Right Knee
         case 's':
-            rightKnee = (rightKnee + 5) % 360;
+        if(rightKnee <90)
+            rightKnee+=5;
             break;
         case 'S':
-            rightKnee = (rightKnee - 5) % 360;
+            if(rightKnee >0)
+            rightKnee-=5;
             break;
 
 
