@@ -136,3 +136,6 @@ dmypy.json
 # spectrogramPlayground.ipynb
 tests
 cmake-build-debug
+Records/
+
+CMakeLists.txt
