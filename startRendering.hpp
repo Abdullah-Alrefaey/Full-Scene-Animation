@@ -7,8 +7,9 @@
 
 #include <iostream>
 #include <GL/glut.h>
+#include "imageLoader/imageloader.h"
 
-void initRendering(std::string bmbImg, GLuint & textureID);      /* Starts the rendering process
+void initRendering(const char* bmbImg, GLuint & textureID);      /* Starts the rendering process
                                                                  *
                                                                  *
                                                                  *

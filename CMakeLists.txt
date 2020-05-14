@@ -2,9 +2,12 @@ include(CheckIncludeFiles)
 cmake_minimum_required(VERSION 3.10) # common to every CLion project
 project(OpenGLLinuxTest) # project name
 
+
 if (UNIX)
     set(OpenGlLinkers -lglut -lGLU -lGL) # setting all the Glut libraries as one variable.
     ################################################
+    configure_file(1.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
+    configure_file(1_DIFFUSE.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
     add_executable(OpenGLLinuxTest1 SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp) #common to all clion project
     target_link_libraries(OpenGLLinuxTest1 ${OpenGlLinkers}) # linking opengl libraries to the project
     #################################################
@@ -23,6 +26,8 @@ if (WIN32)
     # required .lib files to be copied into compiler's proper directory
     set(OpenGlLibs glaux glu32 glui32 glut32 opengl32)
     #These 3 lines are just linking and making executables
+    configure_file(1.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
+    configure_file(1_DIFFUSE.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     add_executable(demo SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp)
     target_link_libraries(demo ${OpenGlLibs}) #linking the libraries to the project file
     add_dependencies(demo glutdlllib) #add dll files as dependencies

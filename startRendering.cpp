@@ -7,6 +7,17 @@
 #include "imageLoader/imageloader.h"
 #include <GL/glut.h>
 #include "texture.hpp"
+//// RGBA
+//GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 0.0 };
+//GLfloat light_diffuse[] = { 0.5, 0.5, 0.5,1.0 };
+//GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0 };
+//// x , y, z, w
+//GLfloat light_position[] = {0.5,5.0, 0.0, 1.0 };
+//GLfloat lightPos1[] = {-0.5,-5.0,-2.0, 1.0 };
+//// Material Properties
+//GLfloat mat_amb_diff[] = {0.643, 0.753, 0.934, 1.0 };
+//GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
+//GLfloat shininess[] = {100.0 };
 
 //Initializes 3D rendering
 void initRendering(const char* bmbImg, GLuint & textureID){

@@ -6,6 +6,12 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
+#include "glm/glm.h"
+#include "imageLoader/imageloader.h"
+#include "texture.hpp"
+#include "startRendering.hpp"
+
+
 using namespace std;
 
 static int mainBody = 0;
@@ -30,7 +36,7 @@ static int LegState = 1;
 
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
-
+GLuint textureId;
 double eye[] = { 3, 3, 10 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
@@ -87,6 +93,9 @@ int main(int argc, char **argv)
     glutInitWindowSize(800, 800);
     glutInitWindowPosition(100, 10);
     glutCreateWindow("Animation Of Full Scene");
+
+    initRendering("1_DIFFUSE.bmp",textureId);
+
     init();
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
@@ -129,15 +138,17 @@ void createFullBody()
     glClear(GL_COLOR_BUFFER_BIT);
     glPushMatrix();
 
-        // Draw The Floor
-        glPushMatrix();
-            glTranslatef(-1.0, 0.0, 0.0);
-            glRotatef(90, 1.0, 0.0, 0.0);
-            glTranslatef(1.0, 0.0, 0.0);
-            glTranslatef(0.0, 0.0, 2.5);
-            glScalef(10.0, 10.0, 0.1);
-            glutWireCube(1.0);
-        glPopMatrix();
+//        // Draw The Floor
+//        glPushMatrix();
+//            glTranslatef(-1.0, 0.0, 0.0);
+//            glRotatef(90, 1.0, 0.0, 0.0);
+//            glTranslatef(1.0, 0.0, 0.0);
+//            glTranslatef(0.0, 0.0, 2.5);
+//            glScalef(10.0, 10.0, 0.1);
+//            glutWireCube(1.0);
+//        glPopMatrix();
+        drawFloorTexture(textureId);
+
 
         // The Translation Movement For the Whole Body
         glTranslatef(forwardOffset, jumpOffset, 0.0);
