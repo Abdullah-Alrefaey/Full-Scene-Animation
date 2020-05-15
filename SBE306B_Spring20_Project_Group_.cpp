@@ -30,12 +30,18 @@ static int rightFingerUp1 = 0, rightFingerUp2  = 0, rightFingerUp3 = 0, rightFin
 // Variables for Jumping Distance
 static double jumpOffset = 0;
 static double forwardOffset = 0;
+static float boxHeight = 1;
+static float returningPosition = 0;
+static bool foundObject = false;
+
 
 // If state = 1 -> jumping to up
 // If state = -1 -> returning to ground
 static int state = 1;
 static int LegState = 1;
 static int kick_state = 1;
+static float totalJumpDistance = 0.025 * 40 * 2;
+static int isJump = false;
 
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
@@ -93,7 +99,7 @@ int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(800, 800);
+    glutInitWindowSize(800, 700);
     glutInitWindowPosition(100, 10);
     glutCreateWindow("Animation Of Full Scene");
 
@@ -117,7 +123,7 @@ void init()
     glLoadIdentity();
     double w = glutGet( GLUT_WINDOW_WIDTH );
     double h = glutGet( GLUT_WINDOW_HEIGHT );
-    gluPerspective(65.0, (GLdouble)w / (GLdouble)h, 1.0, 600.0);
+    gluPerspective(65.0, (GLdouble)w / (GLdouble)h, 1.0, 60.0);
 }
 
 void display()
@@ -153,7 +159,15 @@ void createFullBody()
         drawFloorTexture(textureId);
 
 
+        // Draw box
+        glPushMatrix();
+            glTranslatef(5.0, -2.0, -0.35);
+            glScalef(2.5, boxHeight, 2.5);
+            glutWireCube(1.0);
+        glPopMatrix();
+
         // The Translation Movement For the Whole Body
+        glTranslatef(-5.0, 0.0, 0.0);
         glTranslatef(forwardOffset, jumpOffset, 0.0);
         glRotatef(90, 0.0, 1.0, 0.0);
 
@@ -549,8 +563,8 @@ void walkForward(int value)
     switch (LegState)
     {
         case 1:
-            cout<<"LegState: "<<LegState<<" Right Leg: "<<rightLeg;
-            cout<<" Left Leg: "<<leftLeg<<endl;
+//            cout<<"LegState: "<<LegState<<" Right Leg: "<<rightLeg;
+//            cout<<" Left Leg: "<<leftLeg<<endl;
             if (rightLeg > -30) {
                 rightLeg = (rightLeg - 1) % 360;
                 rightKnee = (rightKnee + 1) % 360;
@@ -561,8 +575,8 @@ void walkForward(int value)
             break;
 
         case 2:
-            cout<<"LegState: "<<LegState<<"  Right Leg: "<<rightLeg;
-            cout<<" Left Leg: "<<leftLeg<<endl;
+//            cout<<"LegState: "<<LegState<<"  Right Leg: "<<rightLeg;
+//            cout<<" Left Leg: "<<leftLeg<<endl;
             if (leftLeg > -30) {
                 leftLeg = (leftLeg - 1) % 360;
                 leftKnee = (leftKnee + 1) % 360;
@@ -600,99 +614,160 @@ void walkForward(int value)
 
 void jumpOver(int heightValue)
 {
-    switch (state)
+    // Check Distance between object and robot
+    // Check if the object is near
+
+//    if (10 - forwardOffset < totalJumpDistance) {
+//        foundObject = true;
+//        returningPosition = boxHeight;
+//    }
+//
+//    if (!foundObject)
+//    {
+//        // DO JUMP
+//
+//    }
+
+    if (10 - forwardOffset > totalJumpDistance || foundObject)
     {
-        // Jumping
+        switch (state)
+        {
+            // Jumping
+            case 1:
+                if (jumpOffset < heightValue) {
+                    jumpOffset += 0.05;
+                    forwardOffset += 0.025;
+                    leftShoulder += 1;
+                    rightShoulder -= 1;
+                    leftKnee += 1;
+                    rightKnee += 1;
+                } else {
+                    state = -1;
+                }
+                glutTimerFunc(1000/60, jumpOver, heightValue);
+                break;
+
+            // Returning Back
+            case -1:
+                if(jumpOffset > returningPosition) {
+                    jumpOffset -= 0.05;
+                    forwardOffset += 0.025;
+                    leftShoulder -= 1;
+                    rightShoulder += 1;
+                    leftKnee -= 1;
+                    rightKnee -= 1;
+                } else if (jumpOffset < returningPosition) {
+                    state = 0;
+                }
+                glutTimerFunc(1000/60, jumpOver, heightValue);
+                break;
+
+                // Returned to ground
+            case 0:
+                state = 1;
+                break;
+
+            default:
+                break;
+        }
+        glutPostRedisplay();
+    }
+
+    else
+    {
+        foundObject = true;
+        returningPosition = boxHeight;
+        glutTimerFunc(1000/60, jumpOver, heightValue);
+    }
+
+//    switch (state)
+//    {
+//        // Jumping
+//        case 1:
+//            if (jumpOffset < heightValue) {
+//                jumpOffset += 0.05;
+//                forwardOffset += 0.025;
+//                leftShoulder += 1;
+//                rightShoulder -= 1;
+//                leftKnee += 1;
+//                rightKnee += 1;
+//            } else {
+//                state = -1;
+//            }
+//            glutTimerFunc(1000/60, jumpOver, heightValue);
+//            break;
+//
+//            // Returning to ground
+//        case -1:
+//            if(jumpOffset > 0) {
+//                jumpOffset -= 0.05;
+//                forwardOffset += 0.025;
+//                leftShoulder -= 1;
+//                rightShoulder += 1;
+//                leftKnee -= 1;
+//                rightKnee -= 1;
+//            } else if (jumpOffset < 0) {
+//                state = 0;
+//            }
+//            glutTimerFunc(1000/60, jumpOver, heightValue);
+//            break;
+//
+//            // Returned to ground
+//        case 0:
+//            state = 1;
+//            break;
+//
+//        default:
+//            break;
+//    }
+//    glutPostRedisplay();
+}
+void kick(int value)
+{
+    switch (kick_state)
+    {
         case 1:
-            if (jumpOffset < heightValue) {
-                jumpOffset += 0.05;
-                forwardOffset += 0.025;
-                leftShoulder += 1;
-                rightShoulder -= 1;
-                leftKnee += 1;
-                rightKnee += 1;
+            if (rightKnee < 45) {
+                rightLeg+=1;
+                rightKnee+=1;
             } else {
-                state = -1;
+                kick_state=-1;
             }
-            glutTimerFunc(1000/60, jumpOver, heightValue);
+            glutTimerFunc(10, kick,1);
             break;
 
-            // Returning to ground
         case -1:
-            if(jumpOffset > 0) {
-                jumpOffset -= 0.05;
-                forwardOffset += 0.025;
-                leftShoulder -= 1;
-                rightShoulder += 1;
-                leftKnee -= 1;
-                rightKnee -= 1;
-            } else if (jumpOffset < 0) {
-                state = 0;
+            if (rightLeg > -15)
+            {
+                rightLeg-=1;
+                if (rightKnee >0)
+                {
+                    rightKnee-=1;
+                }
             }
-            glutTimerFunc(1000/60, jumpOver, heightValue);
+            else if(rightLeg == -15)
+            {
+                //z_sphere is the z coordinate for the sphere or ball object
+                // if(z_sphere < 5){
+                //     z_sphere +=.1;
+                // }
+                // else
+                // {
+                //     kick_state=0;
+                // }
+                kick_state = 0;
+            }
+            glutTimerFunc(10, kick,1);
             break;
 
-            // Returned to ground
         case 0:
-            state = 1;
+            kick_state = 1;
             break;
 
         default:
             break;
     }
     glutPostRedisplay();
-}
-void kick(int value){
-    switch (kick_state)
-    {
-    case 1:
-        if(rightKnee < 45)
-        {
-        rightLeg+=1;
-        rightKnee+=1;
-        }
-        else
-        {
-            kick_state=-1;
-        }     
-        glutTimerFunc(10, kick,1);
-        break;
-    case -1 :
-        if(rightLeg > -15)
-        {
-        rightLeg-=1;
-        if (rightKnee >0)
-        {
-            rightKnee-=1;
-            
-        }
-        
-        }
-        else if(rightLeg == -15)
-        {
-            //z_sphere is the z coordinate for the sphere or ball object
-            // if(z_sphere < 5){
-            //     z_sphere +=.1;
-            // }
-            // else
-            // {
-            //     kick_state=0;
-            // }
-            kick_state=0;
-            
-        }
-        glutTimerFunc(10, kick,1);
-        break;
-
-    case 0:    
-        kick_state=1;
-        break;    
-
-    default:
-        break;
-    }
-    glutPostRedisplay();
-
 }
 
 
