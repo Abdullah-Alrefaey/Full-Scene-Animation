@@ -1,6 +1,6 @@
 include(CheckIncludeFiles)
 cmake_minimum_required(VERSION 3.10) # common to every CLion project
-project(OpenGLLinuxTest) # project name
+project(Full-Scene-Animation) # project name
 
 
 if (UNIX)
@@ -8,8 +8,9 @@ if (UNIX)
     ################################################
     configure_file(1.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
     configure_file(1_DIFFUSE.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
-    add_executable(OpenGLLinuxTest1 SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp) #common to all clion project
-    target_link_libraries(OpenGLLinuxTest1 ${OpenGlLinkers}) # linking opengl libraries to the project
+#    configure_file(1_DIFFUSE.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
+    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp) #common to all clion project
+    target_link_libraries(Full-Scene-Animation ${OpenGlLinkers}) # linking opengl libraries to the project
     #################################################
 endif ()
 
@@ -38,6 +39,7 @@ if (WIN32)
     link_libraries(${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} --verbose)
     configure_file(1.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(1_DIFFUSE.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
+#    configure_file(1_DIFFUSE.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp)
 
 endif ()
