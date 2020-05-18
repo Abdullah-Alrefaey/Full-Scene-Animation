@@ -95,24 +95,7 @@ void jump(int value);
 void walkForward(int value);
 void jumpOver(int value);
 void Choose_texture(int id)
-{
-    switch(id)
-    {
-       case 1:
-           initRendering("1.bmp",textureId);
-//            GLuint loadText(1.bmp);  // Loads A given Texture using Image Object and returns it`s id
-//            void drawFloorTexture(GLuint textID);  // Draw a floor from a bitmap imageloader
-            break;
 
-        case 2:
-            initRendering("1_DIFFUSE.bmp",textureId);
-//            GLuint loadTexture(1_DIFFUSE.bmp);  // Loads A given Texture using Image Object and returns it`s id
-//           void drawFloorTexture(GLuint textID);  // Draw a floor from a bitmap image
-
-
-            break;
-    }
-}
 
 int main(int argc, char **argv)
 {
@@ -1097,6 +1080,29 @@ static void motion(int x, int y)
         glutPostRedisplay();
     }
 
+}
+
+void Choose_texture(int id)
+{
+    switch(id)
+    {
+        case 1:
+            glutPostRedisplay();
+            initRendering("1.bmp",textureId);
+            drawFloorTexture(textureId);
+
+//            GLuint loadText(1.bmp);  // Loads A given Texture using Image Object and returns it`s id
+            break;
+
+        case 2:
+            glutPostRedisplay();
+            initRendering("1_DIFFUSE.bmp",textureId);
+            drawFloorTexture(textureId);
+//            GLuint loadTexture(1_DIFFUSE.bmp);  // Loads A given Texture using Image Object and returns it`s id
+
+
+            break;
+    }
 }
 
 
