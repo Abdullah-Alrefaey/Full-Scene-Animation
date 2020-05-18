@@ -129,6 +129,9 @@ int main(int argc, char **argv)
     glutAddMenuEntry("Floor 1",1);
     glutAddMenuEntry("Floor 2",2);
 //    glutAddMenuEntry("Floor 3",3);
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
     glutDisplayFunc(display);
