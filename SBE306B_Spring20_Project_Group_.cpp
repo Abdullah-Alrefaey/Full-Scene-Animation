@@ -94,6 +94,25 @@ void specialKeys(int key, int x, int y);
 void jump(int value);
 void walkForward(int value);
 void jumpOver(int value);
+void Choose_texture(int id)
+{
+    switch(id)
+    {
+       case 1:
+           initRendering("1.bmp",textureId);
+//            GLuint loadText(1.bmp);  // Loads A given Texture using Image Object and returns it`s id
+//            void drawFloorTexture(GLuint textID);  // Draw a floor from a bitmap imageloader
+            break;
+
+        case 2:
+            initRendering("1_DIFFUSE.bmp",textureId);
+//            GLuint loadTexture(1_DIFFUSE.bmp);  // Loads A given Texture using Image Object and returns it`s id
+//           void drawFloorTexture(GLuint textID);  // Draw a floor from a bitmap image
+
+
+            break;
+    }
+}
 
 int main(int argc, char **argv)
 {
@@ -103,9 +122,13 @@ int main(int argc, char **argv)
     glutInitWindowPosition(100, 10);
     glutCreateWindow("Animation Of Full Scene");
 
-    initRendering("1_DIFFUSE.bmp",textureId);
+//    initRendering("1_DIFFUSE.bmp",textureId);
 
     init();
+    glutCreateMenu(Choose_texture);
+    glutAddMenuEntry("Floor 1",1);
+    glutAddMenuEntry("Floor 2",2);
+//    glutAddMenuEntry("Floor 3",3);
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
     glutDisplayFunc(display);
@@ -156,7 +179,7 @@ void createFullBody()
 //            glScalef(10.0, 10.0, 0.1);
 //            glutWireCube(1.0);
 //        glPopMatrix();
-        drawFloorTexture(textureId);
+//        drawFloorTexture(textureId);
 
 
         // Draw box
@@ -1072,6 +1095,5 @@ static void motion(int x, int y)
     }
 
 }
-
 
 
