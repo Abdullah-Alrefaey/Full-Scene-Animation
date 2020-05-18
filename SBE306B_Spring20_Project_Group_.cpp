@@ -94,7 +94,7 @@ void specialKeys(int key, int x, int y);
 void jump(int value);
 void walkForward(int value);
 void jumpOver(int value);
-void Choose_texture(int id)
+void Choose_texture(int id);
 
 
 int main(int argc, char **argv)
@@ -103,17 +103,17 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(800, 700);
     glutInitWindowPosition(100, 10);
-    glutCreateWindow("Animation Of Full Scene");
+    glutCreateWindow("Animation Of A Full Scene");
 
-//    initRendering("1_DIFFUSE.bmp",textureId);
+    // The Main Floor Texture for the first view
+    initRendering("1_DIFFUSE.bmp",textureId);
 
     init();
     glutCreateMenu(Choose_texture);
     glutAddMenuEntry("Floor 1",1);
     glutAddMenuEntry("Floor 2",2);
-//    glutAddMenuEntry("Floor 3",3);
+    glutAddMenuEntry("Floor 3",3);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
-
 
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
@@ -156,17 +156,8 @@ void createFullBody()
     glClear(GL_COLOR_BUFFER_BIT);
     glPushMatrix();
 
-//        // Draw The Floor
-//        glPushMatrix();
-//            glTranslatef(-1.0, 0.0, 0.0);
-//            glRotatef(90, 1.0, 0.0, 0.0);
-//            glTranslatef(1.0, 0.0, 0.0);
-//            glTranslatef(0.0, 0.0, 2.5);
-//            glScalef(10.0, 10.0, 0.1);
-//            glutWireCube(1.0);
-//        glPopMatrix();
-//        drawFloorTexture(textureId);
-
+        // Draw The Texture on The Floor
+        drawFloorTexture(textureId);
 
         // Draw box
         glPushMatrix();
@@ -1087,22 +1078,21 @@ void Choose_texture(int id)
     switch(id)
     {
         case 1:
-            glutPostRedisplay();
             initRendering("1.bmp",textureId);
-            drawFloorTexture(textureId);
-
-//            GLuint loadText(1.bmp);  // Loads A given Texture using Image Object and returns it`s id
             break;
 
         case 2:
-            glutPostRedisplay();
             initRendering("1_DIFFUSE.bmp",textureId);
-            drawFloorTexture(textureId);
-//            GLuint loadTexture(1_DIFFUSE.bmp);  // Loads A given Texture using Image Object and returns it`s id
+            break;
 
+        case 3:
+            initRendering("1_DIFFUSE.bmp",textureId);
+            break;
 
+        default:
             break;
     }
+    glutPostRedisplay();
 }
 
 
