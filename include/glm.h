@@ -23,6 +23,8 @@
 #define M_PI 3.14159265f
 #endif
 
+#pragma once
+
 #define GLM_NONE     (0)            /* render with only vertices */
 #define GLM_FLAT     (1 << 0)       /* render with facet normals */
 #define GLM_SMOOTH   (1 << 1)       /* render with vertex normals */
