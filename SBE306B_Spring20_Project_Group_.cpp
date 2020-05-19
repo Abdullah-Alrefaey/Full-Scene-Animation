@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
-#include "glm/glm.h"
+#include "include/glm.h"
 #include "imageLoader/imageloader.h"
 #include "texture.hpp"
 #include "startRendering.hpp"
