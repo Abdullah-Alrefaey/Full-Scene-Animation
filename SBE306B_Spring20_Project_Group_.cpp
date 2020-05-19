@@ -62,7 +62,7 @@ void keyboard(unsigned char key, int x, int y);
 static void mouse(int button, int state, int x, int y);
 static void motion(int x, int y);
 
-void createFullBody();
+void createFullScene();
 void createFinger(float xBase, float yBase, float zBase, int angleBase, float xrBack,
                   float xUp, float yUp, float zUp, int angleUp);
 
@@ -150,35 +150,27 @@ void display()
               center[0], center[1], center[2],
               up[0], up[1], up[2]);
 
-    // Draw The Texture on The Floor
-    drawFloorTexture(textureId);
+    // Create The Scene
+    createFullScene();
 
-    // Dar The Body
-    createFullBody();
-
-    // Draw box
-    glPushMatrix();
-        glTranslatef(4,-2,0);
-        box.draw();
-    glPopMatrix();
     glutSwapBuffers();
 }
 
-void createFullBody()
+void createFullScene()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glPushMatrix();
 
-//        // Draw The Texture on The Floor
-//        drawFloorTexture(textureId);
+        // Draw The Texture on The Floor
+        drawFloorTexture(textureId);
 
         // Draw box
-//        glPushMatrix();
-//            glTranslatef(5.0, -2.0, -0.35);
-//            glScalef(2.5, boxHeight, 2.5);
-//            glutWireCube(1.0);
-//        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(4,-2,0);
+            box.draw();
+        glPopMatrix();
 
+        // Create The Full Body
         // The Translation Movement For the Whole Body
         glTranslatef(-4.0, 1.0, 0.0);
         glTranslatef(forwardOffset, jumpOffset, 0.0);
