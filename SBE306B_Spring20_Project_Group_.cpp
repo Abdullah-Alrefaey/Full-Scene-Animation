@@ -44,7 +44,7 @@ static float totalJumpDistance = 0.025 * 40 * 2;
 static int isJump = false;
 
 //box Model
-Model box("taburet1_update.obj");
+Model box("data/taburet1_update.obj");
 
 //blah blah model
 Model obj("dolphins.obj");
@@ -52,7 +52,7 @@ Model obj("dolphins.obj");
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
 GLuint textureId;
-double eye[] = { 0, 0, -10 };
+double eye[] = { 0, 0, 15 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
 double direction[3];
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
     glutCreateWindow("Animation Of A Full Scene");
 
     // The Main Floor Texture for the first view
-    initRendering("1_DIFFUSE.bmp",textureId);
+    initRendering("data/Floor1.bmp",textureId);
     init();
 
     //Models scaling
@@ -140,7 +140,7 @@ void init()
     glMatrixMode(GL_PROJECTION);
     double w = glutGet( GLUT_WINDOW_WIDTH );
     double h = glutGet( GLUT_WINDOW_HEIGHT );
-    gluPerspective(65.0, (GLdouble)w / (GLdouble)h, 1.0, 60.0);
+    gluPerspective(90.0, (GLdouble)w / (GLdouble)h, 1.0, 60.0);
 }
 
 void display()
@@ -153,19 +153,21 @@ void display()
     gluLookAt(eye[0], eye[1], eye[2],
               center[0], center[1], center[2],
               up[0], up[1], up[2]);
-    //Lighting and materail stuff
+
+    //Lighting and material stuff
     // x , y, z, w
-    GLfloat light_position[] = {0.5,5.0, 0.0, 1.0 };
-    GLfloat lightPos1[] = {-0.5,-5.0,-2.0, 1.0 };
+    GLfloat light_position[] = {0.5, 5.0, 0.0, 1.0 };
+    GLfloat lightPos1[] = {-0.5, -5.0,-2.0, 1.0 };
     // Material Properties
-    GLfloat mat_amb_diff[] = {0.643, 0.753, 0.934, 1.0 };
+    GLfloat mat_amb_diff[] = {0.643, 0.753, 0.934, 1.0};
     GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
-    GLfloat shininess[] = {100.0 };
+    GLfloat shininess[] = {100.0};
 
     glPushMatrix();
-    glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+        glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     glPopMatrix();
+
     //materials properties
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,mat_amb_diff);
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
@@ -198,8 +200,8 @@ void createFullScene()
         // Create The Full Body
         // The Translation Movement For the Whole Body
         glTranslatef(-4.0, 1.0, 0.0);
-        glTranslatef(forwardOffset, jumpOffset, 0.0);
-        glRotatef(90, 0.0, 1.0, 0.0);
+        glTranslatef(forwardOffset, jumpOffset, 3.0);
+//        glRotatef(0, 0.0, 1.0, 0.0);
 
         // Draw The Head
         glTranslatef (0.0, 0.0, -2.0);
@@ -1108,15 +1110,15 @@ void Choose_texture(int id)
     switch(id)
     {
         case 1:
-            initRendering("1.bmp",textureId);
+            initRendering("data/Floor1.bmp",textureId);
             break;
 
         case 2:
-            initRendering("1_DIFFUSE.bmp",textureId);
+            initRendering("data/Floor2.bmp",textureId);
             break;
 
         case 3:
-            initRendering("wall.bmp",textureId);
+            initRendering("data/Floor3.bmp",textureId);
             break;
 
         default:
