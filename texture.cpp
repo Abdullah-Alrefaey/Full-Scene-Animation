@@ -41,16 +41,16 @@ void drawFloorTexture(GLuint textID){
     glTexCoord2f(0.0f, 0.0f);
 
 
-    glVertex3f(-10,-2,10);
+    glVertex3f(-10,-3,10);
     glTexCoord2f(5.0f,  0.0f);
 
-    glVertex3f(10,-2,10);
+    glVertex3f(10,-3,10);
     glTexCoord2f(5.0f,  20.0f);
 
-    glVertex3f(10,-2,-10);
+    glVertex3f(10,-3,-10);
     glTexCoord2f(0.0f, 20.0f);
 
-    glVertex3f(-10,-2,-10);
+    glVertex3f(-10,-3,-10);
     glEnd();
     glDisable(GL_TEXTURE_2D);
 

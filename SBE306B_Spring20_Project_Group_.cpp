@@ -44,12 +44,12 @@ static float totalJumpDistance = 0.025 * 40 * 2;
 static int isJump = false;
 
 //box Model
-Model box("data/taburet1_update.obj");
+Model box("taburet1_update.obj");
 
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
 GLuint textureId;
-double eye[] = { 3, 3, 10 };
+double eye[] = { 0, 0, 10 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
 double direction[3];
@@ -62,7 +62,6 @@ void keyboard(unsigned char key, int x, int y);
 static void mouse(int button, int state, int x, int y);
 static void motion(int x, int y);
 
-void createFloor();
 void createFullBody();
 void createFinger(float xBase, float yBase, float zBase, int angleBase, float xrBack,
                   float xUp, float yUp, float zUp, int angleUp);
@@ -104,21 +103,21 @@ int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(800, 700);
+    glutInitWindowSize(900, 700);
     glutInitWindowPosition(100, 10);
     glutCreateWindow("Animation Of A Full Scene");
 
     // The Main Floor Texture for the first view
     initRendering("1_DIFFUSE.bmp",textureId);
+    init();
 
     //Models scaling
     box.scale(2);
 
-    init();
     glutCreateMenu(Choose_texture);
-    glutAddMenuEntry("Floor 1",1);
-    glutAddMenuEntry("Floor 2",2);
-    glutAddMenuEntry("Floor 3",3);
+        glutAddMenuEntry("Floor 1",1);
+        glutAddMenuEntry("Floor 2",2);
+        glutAddMenuEntry("Floor 3",3);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 
     glutMouseFunc(mouse);
@@ -135,30 +134,30 @@ int main(int argc, char **argv)
 void init()
 {
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
     double w = glutGet( GLUT_WINDOW_WIDTH );
     double h = glutGet( GLUT_WINDOW_HEIGHT );
-    gluPerspective(65.0, (GLdouble)w / (GLdouble)h, 1.0, 60.0);
+    gluPerspective(80.0, (GLdouble)w / (GLdouble)h, 1.0, 60.0);
 }
 
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 0.0);
-    glShadeModel(GL_FLAT);
     glMatrixMode(GL_MODELVIEW);
+    glShadeModel(GL_FLAT);
     glLoadIdentity();
     gluLookAt(eye[0], eye[1], eye[2],
               center[0], center[1], center[2],
               up[0], up[1], up[2]);
 
-//    createFloor();
     createFullBody();
+
+    // Draw The Texture on The Floor
+    drawFloorTexture(textureId);
 
     //Draw box
     glPushMatrix();
-        glTranslatef(0,-2,0);
-        box.load("data/dolphins.obj");
+        glTranslatef(4,-2,0);
         box.draw();
     glPopMatrix();
     glutSwapBuffers();
@@ -169,18 +168,18 @@ void createFullBody()
     glClear(GL_COLOR_BUFFER_BIT);
     glPushMatrix();
 
-        // Draw The Texture on The Floor
-        drawFloorTexture(textureId);
+//        // Draw The Texture on The Floor
+//        drawFloorTexture(textureId);
 
         // Draw box
-        glPushMatrix();
-            glTranslatef(5.0, -2.0, -0.35);
-            glScalef(2.5, boxHeight, 2.5);
-            glutWireCube(1.0);
-        glPopMatrix();
+//        glPushMatrix();
+//            glTranslatef(5.0, -2.0, -0.35);
+//            glScalef(2.5, boxHeight, 2.5);
+//            glutWireCube(1.0);
+//        glPopMatrix();
 
         // The Translation Movement For the Whole Body
-        glTranslatef(-5.0, 0.0, 0.0);
+        glTranslatef(-4.0, 1.0, 0.0);
         glTranslatef(forwardOffset, jumpOffset, 0.0);
         glRotatef(90, 0.0, 1.0, 0.0);
 
