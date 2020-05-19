@@ -179,11 +179,14 @@ void createFullScene()
     glPushMatrix();
 
         // Draw The Texture on The Floor
-        drawFloorTexture(textureId);
+        glPushMatrix();
+            glTranslatef(0,1.5,0);
+            drawFloorTexture(textureId);
+        glPopMatrix();
 
         // Draw box
         glPushMatrix();
-            glTranslatef(4,-2,0);
+            glTranslatef(4,-0.5,0);
             box.draw();
         glPopMatrix();
 
