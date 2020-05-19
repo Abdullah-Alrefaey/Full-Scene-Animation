@@ -147,16 +147,22 @@ void display()
 
     //Lighting and material stuff
     // x , y, z, w
-    GLfloat light_position[] = {0.5, 5.0, 0.0, 1.0 };
-    GLfloat lightPos1[] = {-0.5, -5.0,-2.0, 1.0 };
+//    GLfloat light_position[] = {0.5, 5.0, 0.0, 1.0 };
+//    GLfloat lightPos1[] = {-0.5, -5.0,-2.0, 1.0 };
+    GLfloat left_light_position[] =
+            {0.0, 10.0, 1.0, 0.0}, right_light_position[] =
+            {0.0, -10.0, 1.0, 0.0}, white_light[] =
+            {1.0, 1.0, 1.0, 0.0};
     // Material Properties
     GLfloat mat_amb_diff[] = {0.643, 0.753, 0.934, 1.0};
     GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat shininess[] = {100.0};
 
     glPushMatrix();
-        glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
-        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+        glLightfv(GL_LIGHT0, GL_POSITION, left_light_position);
+        glLightfv(GL_LIGHT0, GL_AMBIENT_AND_DIFFUSE, white_light);
+        glLightfv(GL_LIGHT1, GL_POSITION, right_light_position);
+        glLightfv(GL_LIGHT1, GL_AMBIENT_AND_DIFFUSE, white_light);
     glPopMatrix();
 
     //materials properties

@@ -48,6 +48,7 @@ if (WIN32)
     configure_file(data/taburet1_update.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(data/dolphins.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(data/dolphins.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
+
     add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp src/objLoader.cpp src/glm.cpp)
 
 endif ()
