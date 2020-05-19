@@ -5,7 +5,7 @@
 #include "texture.hpp"
 #include <GL/glut.h>
 #include "imageLoader/imageloader.h"
-#include "glm/glm.h"
+#include "include/glm.h"
 
 GLuint loadTexture(Image* image) {
     GLuint textureId;

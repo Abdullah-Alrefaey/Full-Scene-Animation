@@ -8,11 +8,11 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
-#include "glm/glm.h"
+#include "include/glm.h"
 #include "imageLoader/imageloader.h"
 #include "texture.hpp"
 #include "startRendering.hpp"
-
+#include "include/objLoader.h"
 
 using namespace std;
 
@@ -42,6 +42,9 @@ static int LegState = 1;
 static int kick_state = 1;
 static float totalJumpDistance = 0.025 * 40 * 2;
 static int isJump = false;
+
+//box Model
+Model box("data/taburet1_update.obj");
 
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
@@ -108,6 +111,9 @@ int main(int argc, char **argv)
     // The Main Floor Texture for the first view
     initRendering("1_DIFFUSE.bmp",textureId);
 
+    //Models scaling
+    box.scale(2);
+
     init();
     glutCreateMenu(Choose_texture);
     glutAddMenuEntry("Floor 1",1);
@@ -148,6 +154,13 @@ void display()
 
 //    createFloor();
     createFullBody();
+
+    //Draw box
+    glPushMatrix();
+        glTranslatef(0,-2,0);
+        box.load("data/dolphins.obj");
+        box.draw();
+    glPopMatrix();
     glutSwapBuffers();
 }
 
