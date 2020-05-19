@@ -47,7 +47,7 @@ static int isJump = false;
 Model box("data/taburet1_update.obj");
 
 //blah blah model
-Model obj("dolphins.obj");
+Model obj("data/dolphins.obj");
 
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
