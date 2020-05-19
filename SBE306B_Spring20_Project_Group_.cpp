@@ -52,7 +52,7 @@ Model obj("data/dolphins.obj");
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
 GLuint textureId;
-double eye[] = { 0, 0, 15 };
+double eye[] = { 0, 5, 10 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
 double direction[3];
@@ -112,7 +112,6 @@ int main(int argc, char **argv)
 
     // The Main Floor Texture for the first view
     initRendering("data/Floor1.bmp",textureId);
-    init();
 
     //Models scaling
     box.scale(1.5);
@@ -133,14 +132,6 @@ int main(int argc, char **argv)
 
     glutMainLoop();
     return 0;
-}
-
-void init()
-{
-    glMatrixMode(GL_PROJECTION);
-    double w = glutGet( GLUT_WINDOW_WIDTH );
-    double h = glutGet( GLUT_WINDOW_HEIGHT );
-    gluPerspective(90.0, (GLdouble)w / (GLdouble)h, 1.0, 60.0);
 }
 
 void display()
@@ -192,7 +183,7 @@ void createFullScene()
 
         // Draw box
         glPushMatrix();
-            glTranslatef(4,-0.5,0);
+            glTranslatef(4,-0.4,0);
             box.draw();
         glPopMatrix();
         obj.draw();
@@ -201,7 +192,7 @@ void createFullScene()
         // The Translation Movement For the Whole Body
         glTranslatef(-4.0, 1.0, 0.0);
         glTranslatef(forwardOffset, jumpOffset, 3.0);
-//        glRotatef(0, 0.0, 1.0, 0.0);
+        glRotatef(90, 0.0, 1.0, 0.0);
 
         // Draw The Head
         glTranslatef (0.0, 0.0, -2.0);
@@ -254,7 +245,7 @@ void createFullScene()
 
         // Draw Left Leg
         glPushMatrix();
-            createLeg(0.45, -0.8, 0.0,
+            createLeg(0.45, -0.7, 0.0,
                       0.0, -1.0, 0.0,
                       -0.5, leftLeg,
                       -0.5, leftKnee);
@@ -262,7 +253,7 @@ void createFullScene()
 
         // Draw Right Leg
         glPushMatrix();
-            createLeg(-0.45, -0.8, 0.0,
+            createLeg(-0.45, -0.7, 0.0,
                       0.0, -1.0, 0.0,
                       -0.5, rightLeg,
                       -0.5, rightKnee);
@@ -391,7 +382,7 @@ void reshape(int w, int h)
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(65.0, (GLfloat)w / (GLfloat)h, 1.0, 20.0);
+    gluPerspective(100.0, (GLfloat)w / (GLfloat)h, 1.0, 30.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(0.0, 0.0, -5.0);
