@@ -143,7 +143,7 @@ void init()
 
 void display()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_FLAT);
     glMatrixMode(GL_MODELVIEW);
@@ -151,14 +151,31 @@ void display()
     gluLookAt(eye[0], eye[1], eye[2],
               center[0], center[1], center[2],
               up[0], up[1], up[2]);
+    //Lighting and materail stuff
+    // x , y, z, w
+    GLfloat light_position[] = {0.5,5.0, 0.0, 1.0 };
+    GLfloat lightPos1[] = {-0.5,-5.0,-2.0, 1.0 };
+    // Material Properties
+    GLfloat mat_amb_diff[] = {0.643, 0.753, 0.934, 1.0 };
+    GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
+    GLfloat shininess[] = {100.0 };
+
+    glPushMatrix();
+    glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glPopMatrix();
+    //materials properties
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,mat_amb_diff);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
 
 //    createFloor();
     createFullBody();
 
-    //Draw box
+    //Draw Model
     glPushMatrix();
-        glTranslatef(0,-2,0);
-//        box.load("dolphins.obj");
+        // glTranslatef(0,-2,0);
+        // box.load("dolphins.obj");
         box.draw();
     glPopMatrix();
     glutSwapBuffers();
@@ -166,15 +183,17 @@ void display()
 
 void createFullBody()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
     glPushMatrix();
-
-        // Draw The Texture on The Floor
-        drawFloorTexture(textureId);
+        glPushMatrix();
+            glTranslatef(0,-0.5,0);
+            // Draw The Texture on The Floor
+            drawFloorTexture(textureId);
+        glPopMatrix();
 
         // Draw box
         glPushMatrix();
-            glTranslatef(5.0, -2.0, -0.35);
+            glTranslatef(5.0, -2, -0.35);
             glScalef(2.5, boxHeight, 2.5);
             glutWireCube(1.0);
         glPopMatrix();
