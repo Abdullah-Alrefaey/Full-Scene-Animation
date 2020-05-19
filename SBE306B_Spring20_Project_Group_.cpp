@@ -49,7 +49,7 @@ Model box("taburet1_update.obj");
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
 GLuint textureId;
-double eye[] = { 0, 0, 10 };
+double eye[] = { 0, 0, -10 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
 double direction[3];
@@ -136,7 +136,7 @@ void init()
     glMatrixMode(GL_PROJECTION);
     double w = glutGet( GLUT_WINDOW_WIDTH );
     double h = glutGet( GLUT_WINDOW_HEIGHT );
-    gluPerspective(80.0, (GLdouble)w / (GLdouble)h, 1.0, 60.0);
+    gluPerspective(65.0, (GLdouble)w / (GLdouble)h, 1.0, 60.0);
 }
 
 void display()
@@ -167,12 +167,13 @@ void display()
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
 
-    createFullBody();
-
     // Draw The Texture on The Floor
     drawFloorTexture(textureId);
 
-    //Draw box
+    // Dar The Body
+    createFullBody();
+
+    // Draw box
     glPushMatrix();
         glTranslatef(4,-2,0);
         box.draw();
