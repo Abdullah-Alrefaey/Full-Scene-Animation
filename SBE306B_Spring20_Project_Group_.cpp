@@ -1086,7 +1086,7 @@ void Choose_texture(int id)
             break;
 
         case 3:
-            initRendering("1_DIFFUSE.bmp",textureId);
+            initRendering("wall.bmp",textureId);
             break;
 
         default:
