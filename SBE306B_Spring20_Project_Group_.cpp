@@ -44,7 +44,7 @@ static float totalJumpDistance = 0.025 * 40 * 2;
 static int isJump = false;
 
 //box Model
-Model box("data/taburet1_update.obj");
+Model box("taburet1_update.obj");
 
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
@@ -158,7 +158,7 @@ void display()
     //Draw box
     glPushMatrix();
         glTranslatef(0,-2,0);
-        box.load("data/dolphins.obj");
+//        box.load("dolphins.obj");
         box.draw();
     glPopMatrix();
     glutSwapBuffers();

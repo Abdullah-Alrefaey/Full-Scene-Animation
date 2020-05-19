@@ -1,5 +1,5 @@
 include(CheckIncludeFiles)
-cmake_minimum_required(VERSION 3.10) # common to every CLion project
+cmake_minimum_required(VERSION 3.16) # common to every CLion project
 project(Full-Scene-Animation) # project name
 
 
@@ -39,7 +39,11 @@ if (WIN32)
     link_libraries(${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} --verbose)
     configure_file(1.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(1_DIFFUSE.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
-#    configure_file(1_DIFFUSE.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
-    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp)
+    configure_file(wall.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
+    configure_file(taburet1_update.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
+    configure_file(taburet1_update.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
+    configure_file(dolphins.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
+    configure_file(dolphins.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
+    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp src/objLoader.cpp src/glm.cpp)
 
 endif ()
