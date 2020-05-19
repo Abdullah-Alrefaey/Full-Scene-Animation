@@ -46,6 +46,9 @@ static int isJump = false;
 //box Model
 Model box("data/taburet1_update.obj");
 
+//blah blah model
+Model obj("data/dolphins.obj");
+
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
 GLuint textureId;
@@ -112,7 +115,8 @@ int main(int argc, char **argv)
     init();
 
     //Models scaling
-    box.scale(2);
+    box.scale(1.5);
+    obj.scale(1.5);
 
     glutCreateMenu(Choose_texture);
         glutAddMenuEntry("Floor 1",1);
@@ -191,6 +195,7 @@ void createFullScene()
             glTranslatef(4,-0.5,0);
             box.draw();
         glPopMatrix();
+        obj.draw();
 
         // Create The Full Body
         // The Translation Movement For the Whole Body
