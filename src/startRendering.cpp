@@ -2,11 +2,11 @@
 // Created by ahmad on 5/13/20.
 //
 
-#include "startRendering.hpp"
+#include "../include/startRendering.hpp"
 #include <iostream>
-#include "imageLoader/imageloader.h"
+#include "../include/imageloader.h"
 #include <GL/glut.h>
-#include "texture.hpp"
+#include "../include/texture.hpp"
 // RGBA
 GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 0.0 };
 GLfloat light_diffuse[] = { 0.5, 0.5, 0.5,1.0 };

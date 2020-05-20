@@ -1,7 +1,7 @@
-#include <assert.h>
+#include <cassert>
 #include <fstream>
 
-#include "imageloader.h"
+#include "../include/imageloader.h"
 
 using namespace std;
 

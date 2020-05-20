@@ -2,10 +2,8 @@
 // Created by ahmad on 5/13/20.
 //
 
-#include "texture.hpp"
-#include <GL/glut.h>
-#include "imageLoader/imageloader.h"
-#include "include/glm.h"
+#include "../include/texture.hpp"
+#include "../include/imageloader.h"
 
 GLuint loadTexture(Image* image) {
     GLuint textureId;
