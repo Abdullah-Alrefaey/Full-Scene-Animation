@@ -13,7 +13,7 @@ if (UNIX)
     configure_file(data/taburet1_update.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
     configure_file(data/dolphins.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
     configure_file(data/dolphins.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
-    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp src/objLoader.cpp src/glm.cpp) #common to all clion project
+    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp src/startRendering.cpp src/texture.cpp src/imageloader.cpp src/objLoader.cpp src/glm.cpp) #common to all clion project
     target_link_libraries(Full-Scene-Animation ${OpenGlLinkers}) # linking opengl libraries to the project
     #################################################
 endif ()
@@ -49,6 +49,6 @@ if (WIN32)
     configure_file(data/dolphins.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(data/dolphins.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
 
-    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp startRendering.cpp texture.cpp imageLoader/imageloader.cpp src/objLoader.cpp src/glm.cpp)
+    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp src/startRendering.cpp src/texture.cpp src/imageloader.cpp src/objLoader.cpp src/glm.cpp)
 
 endif ()
