@@ -13,10 +13,8 @@
 using namespace std;
 
 static int mainBody = 0;
-static int leftShoulder = -90, rightShoulder = 90;
-static int leftShoulderX = 0;
-static int leftShoulderY = 0;
-static int leftShoulderZ = 1;
+static int leftShoulderY = -90, rightShoulderY = 90;
+static int leftShoulderZ = 0, rightShoulderZ = 0;
 static int leftElbow = 0, rightElbow = 0;
 static signed int leftLeg = 0, rightLeg = 0;
 static signed int leftKnee = 0, rightKnee = 0;
@@ -45,7 +43,7 @@ static float kickDistance = 0;
 
 // Variables for Jumping Distance
 static float boxHeight = 1;
-static float returningPosition = 0;
+static float returningPosition = 1;
 static bool foundObject = false;
 
 // If state = 1 -> jumping to up
@@ -84,7 +82,7 @@ void createArm(float xShld, float yShld, float zShld,
                float xFing, float yFing,
                float zFing1, float zFing2, float zFing3, float zFing4, float zFing5,
                float xrB, float xUp,
-               float xShldRotate, int ShldAngle,
+               float xShldRotate, int ShldAngleZ, int ShldAngleY,
                float xElbRotate, int ElbAngle,
                int baseAngle1, int upAngle1, int baseAngle2, int upAngle2,
                int baseAngle3, int upAngle3, int baseAngle4, int upAngle4,
@@ -253,7 +251,7 @@ void createFullScene()
                       1.5, 0.05,
                       0.2, 0.1, 0.0, -0.1, -0.1,
                       0.1, 0.1,
-                      0.5, leftShoulder,
+                      0.5, leftShoulderY, leftShoulderZ,
                       -0.5, leftElbow,
                       leftFingerBase1, leftFingerUp1,
                       leftFingerBase2, leftFingerUp2,
@@ -269,7 +267,7 @@ void createFullScene()
                       -1.5, 0.05,
                       0.2, 0.1, 0.0, -0.1, -0.1,
                       -0.1, -0.1,
-                      -0.5, rightShoulder,
+                      -0.5, rightShoulderY, rightShoulderZ,
                       0.5, rightElbow,
                       rightFingerBase1, rightFingerUp1,
                       rightFingerBase2, rightFingerUp2,
@@ -325,7 +323,7 @@ void createArm(float xShld, float yShld, float zShld,
                float xFing, float yFing,
                float zFing1, float zFing2, float zFing3, float zFing4, float zFing5,
                float xrB, float xUp,
-               float xShldRotate, int ShldAngle,
+               float xShldRotate, int ShldAngleZ, int ShldAngleY,
                float xElbRotate, int ElbAngle,
                int baseAngle1, int upAngle1, int baseAngle2, int upAngle2,
                int baseAngle3, int upAngle3, int baseAngle4, int upAngle4,
@@ -334,12 +332,9 @@ void createArm(float xShld, float yShld, float zShld,
     // Shoulder
     glTranslatef(xShld, yShld, zShld);
     glTranslatef (-xShldRotate, 0.0, 0.0);
-    glRotatef ((GLfloat) ShldAngle, leftShoulderX, leftShoulderY, leftShoulderZ);
+    glRotatef ((GLfloat) ShldAngleZ, 0.0, 0, 1.0);
+    glRotatef ((GLfloat) ShldAngleY, 0.0, 1.0, 0.0);
     glTranslatef (xShldRotate, 0.0, 0.0);
-
-//    glTranslatef (-xShldRotate, 0.0, 0.0);
-//    glRotatef ((GLfloat) 45, 0.0, 1.0, 0.0);
-//    glTranslatef (xShldRotate, 0.0, 0.0);
 
     glPushMatrix();
         glScalef (1.0, 0.2, 0.5);
@@ -580,8 +575,8 @@ void jump(int heightValue)
         case 1:
             if (yBody < float(heightValue)) {
                 yBody += 0.05;
-                leftShoulder += 1;
-                rightShoulder -= 1;
+                leftShoulderY += 1;
+                rightShoulderY -= 1;
                 leftKnee += 1;
                 rightKnee += 1;
             } else {
@@ -594,8 +589,8 @@ void jump(int heightValue)
         case -1:
             if(yBody > ground) {
                 yBody -= 0.05;
-                leftShoulder -= 1;
-                rightShoulder += 1;
+                leftShoulderY -= 1;
+                rightShoulderY += 1;
                 leftKnee -= 1;
                 rightKnee -= 1;
             } else if (yBody < ground) {
@@ -631,14 +626,26 @@ void walkForward(int value)
 //            cout<<"LegState: "<<LegState<<" Right Leg: "<<rightLeg;
 //            cout<<" Left Leg: "<<leftLeg<<endl;
             if (rightLeg > -45) {
-                xBody += 0.01;
+                // Move Body
+                xBody += 0.03;
+
+                // Move Right Leg Forward
                 rightLeg -= 1;
                 rightKnee += 1;
+
+                // Move Left Leg Backward
                 if (leftLeg < 30)
                 {
                     cout<<"leftLeg "<<leftLeg<<endl;
                     leftLeg += 1;
                     leftKnee += 1;
+                }
+
+                // Move Arms
+                if (rightShoulderZ < 45)
+                {
+                    rightShoulderZ += 1;
+                    leftShoulderZ += 1;
                 }
             } else {
                 LegState = 2;
@@ -650,13 +657,25 @@ void walkForward(int value)
 //            cout<<"LegState: "<<LegState<<"  Right Leg: "<<rightLeg;
 //            cout<<" Left Leg: "<<leftLeg<<endl;
             if (rightLeg < 0) {
-                xBody += 0.02;
+                // Move Body
+                xBody += 0.03;
+
+                // Move Right Leg
                 rightLeg += 1;
                 rightKnee -= 1;
+
+                // Return Left Leg
                 if (leftLeg > 0)
                 {
                     leftLeg -= 1;
                     leftKnee -= 1;
+                }
+
+                // Return Arms
+                if (rightShoulderZ > 0)
+                {
+                    rightShoulderZ -= 1;
+                    leftShoulderZ -= 1;
                 }
             }
             else {
@@ -692,7 +711,7 @@ void jumpOver(int heightValue)
 //
 //    }
 
-    if (10 - xBody > totalJumpDistance || foundObject)
+    if (10 - xBody > totalJumpDistance)
     {
         switch (state)
         {
@@ -701,8 +720,8 @@ void jumpOver(int heightValue)
                 if (yBody < float(heightValue)) {
                     yBody += 0.05;
                     xBody += 0.025;
-                    leftShoulder += 1;
-                    rightShoulder -= 1;
+                    leftShoulderY += 1;
+                    rightShoulderY -= 1;
                     leftKnee += 1;
                     rightKnee += 1;
                 } else {
@@ -716,8 +735,8 @@ void jumpOver(int heightValue)
                 if(yBody > returningPosition) {
                     yBody -= 0.05;
                     xBody += 0.025;
-                    leftShoulder -= 1;
-                    rightShoulder += 1;
+                    leftShoulderY -= 1;
+                    rightShoulderY += 1;
                     leftKnee -= 1;
                     rightKnee -= 1;
                 } else if (yBody < returningPosition) {
@@ -751,8 +770,8 @@ void jumpOver(int heightValue)
 //            if (yBody < heightValue) {
 //                yBody += 0.05;
 //                xBody += 0.025;
-//                leftShoulder += 1;
-//                rightShoulder -= 1;
+//                leftShoulderY += 1;
+//                rightShoulderY -= 1;
 //                leftKnee += 1;
 //                rightKnee += 1;
 //            } else {
@@ -766,8 +785,8 @@ void jumpOver(int heightValue)
 //            if(yBody > 0) {
 //                yBody -= 0.05;
 //                xBody += 0.025;
-//                leftShoulder -= 1;
-//                rightShoulder += 1;
+//                leftShoulderY -= 1;
+//                rightShoulderY += 1;
 //                leftKnee -= 1;
 //                rightKnee -= 1;
 //            } else if (yBody < 0) {
@@ -883,16 +902,19 @@ void keyboard(unsigned char key, int x, int y)
             break;
 
         // walkForward Case
-        case '3':
+        // Change to d
+        case 'd':
             walkForward(0);
             break;
-        // kick Case
-        case 'l':
+
+        // Kick Case
+        case 'k':
             kick(1);
             break;       
 
-        case '4':
-            jumpOver(2);
+        // Long Jump
+        case 'l':
+            jumpOver(3);
             break;
 
         case '1':
@@ -910,239 +932,111 @@ void keyboard(unsigned char key, int x, int y)
             mainBody = (mainBody + 5) % 360;
             break;
 
-       // Left Shoulder
-        case 'r':
-            if(leftShoulder < 90)
-                leftShoulderY = 1;
-                leftShoulderZ = 0;
-                leftShoulder += 5;
+        // Left ShoulderY
+        case 'y':
+            if(leftShoulderY < 90)
+                leftShoulderY += 5;
             break;
-        case 'R':
-          if(leftShoulder > -90)
-              leftShoulderY = 1;
-              leftShoulderZ = 0;
-              leftShoulder-=5;
+        case 'Y':
+            if(leftShoulderY > -90)
+                leftShoulderY -= 5;
+            break;
+
+        // Left ShoulderZ
+        case 'u':
+            if(leftShoulderZ > -180)
+                leftShoulderZ -= 5;
+            break;
+        case 'U':
+            if(leftShoulderZ < 0)
+                leftShoulderZ += 5;
             break;
 
         // Left Elbow
-        case 'f':
-        if(leftElbow>-120)
-            leftElbow-=5;
+        case 'h':
+            if(leftElbow >- 120)
+                leftElbow -= 5;
             break;
-        case 'F':
-           if(leftElbow < 0)
-           leftElbow+=5;
+        case 'H':
+            if(leftElbow < 0)
+                leftElbow += 5;
             break;
 
-        // Right Shoulder
-        case 'q':
-                if(rightShoulder > -90)
-                rightShoulder-=5;
-            
+        // Right ShoulderY
+        case 'r':
+            if(rightShoulderY > -90)
+                rightShoulderY -= 5;
             break;
-        case 'Q':
-            if(rightShoulder < 90)
-                rightShoulder+=5;
+        case 'R':
+            if(rightShoulderY < 90)
+                rightShoulderY += 5;
+            break;
+
+        // Right ShoulderZ
+        case 't':
+            if(rightShoulderZ < 180)
+                rightShoulderZ += 5;
+            break;
+        case 'T':
+            if(rightShoulderZ > 0)
+                rightShoulderZ -= 5;
             break;
 
         // Right Elbow
-        case 'a':
-           if(rightElbow<120)
-            rightElbow+=5;
-            break;
-        case 'A':
-        if(rightElbow > 0)
-           rightElbow-=5;
+        case 'f':
+           if(rightElbow < 120)
+               rightElbow += 5;
+           break;
+        case 'F':
+            if(rightElbow > 0)
+                rightElbow -= 5;
             break;
 
         // Left Leg
-        case 'e':
+        case 'z':
             if(leftLeg > -90)
                 leftLeg-=5;
             break;
-        case 'E':
+        case 'Z':
             if(leftLeg < 75)
                 leftLeg+=5;
             break;
 
         // Left Knee
-        case 'd':
-            if(leftKnee <90)
-            leftKnee+=5;
+        case 'x':
+            if (leftKnee < 90)
+                leftKnee += 5;
             break;
-        case 'D':
-            if(leftKnee >0)
-            leftKnee-=5;
+        case 'X':
+            if(leftKnee > 0)
+                leftKnee -= 5;
             break;
-
 
         // Right Leg
-        case 'w':
+        case 'c':
             if(rightLeg > -90)
-                rightLeg-=5;
+                rightLeg -= 5;
             break;
-        case 'W':
+        case 'C':
             if(rightLeg < 75)
-                rightLeg+=5;
+                rightLeg += 5;
             break;
 
         // Right Knee
-        case 's':
-        if(rightKnee <90)
-            rightKnee+=5;
-            break;
-        case 'S':
-            if(rightKnee >0)
-            rightKnee-=5;
-            break;
-
-
-        // Left Finger 1 Control
-        case 't':
-            leftFingerBase1 = (leftFingerBase1 - 5) % 360;
-            break;
-        case 'T':
-            leftFingerBase1 = (leftFingerBase1 + 5) % 360;
-            break;
-        case 'y':
-            leftFingerUp1 = (leftFingerUp1 - 5) % 360;
-            break;
-        case 'Y':
-            leftFingerUp1 = (leftFingerUp1 + 5) % 360;
-            break;
-
-        // Left Finger 2 Control
-        case 'u':
-            leftFingerBase2 = (leftFingerBase2 - 5) % 360;
-            break;
-        case 'U':
-            leftFingerBase2 = (leftFingerBase2 + 5) % 360;
-            break;
-        case 'i':
-            leftFingerUp2 = (leftFingerUp2 - 5) % 360;
-            break;
-        case 'I':
-            leftFingerUp2 = (leftFingerUp2 + 5) % 360;
-            break;
-
-        // Left Finger 3 Control
-        case 'o':
-            leftFingerBase3 = (leftFingerBase3 - 5) % 360;
-            break;
-        case 'O':
-            leftFingerBase3 = (leftFingerBase3 + 5) % 360;
-            break;
-        case 'p':
-            leftFingerUp3 = (leftFingerUp3 - 5) % 360;
-            break;
-        case 'P':
-            leftFingerUp3 = (leftFingerUp3 + 5) % 360;
-            break;
-
-        // Left Finger 4 Control
-        case 'g':
-            leftFingerBase4 = (leftFingerBase4 - 5) % 360;
-            break;
-        case 'G':
-            leftFingerBase4 = (leftFingerBase4 + 5) % 360;
-            break;
-        case 'h':
-            leftFingerUp4 = (leftFingerUp4 - 5) % 360;
-            break;
-        case 'H':
-            leftFingerUp4 = (leftFingerUp4 + 5) % 360;
-            break;
-
-        // Left Finger 5 Control
-        case 'j':
-            leftFingerBase5 = (leftFingerBase5 - 5) % 360;
-            break;
-        case 'J':
-            leftFingerBase5 = (leftFingerBase5 + 5) % 360;
-            break;
-        case 'k':
-            leftFingerUp5 = (leftFingerUp5 - 5) % 360;
-            break;
-        case 'K':
-            leftFingerUp5 = (leftFingerUp5 + 5) % 360;
-            break;
-
-
-        // Right Finger 1 Control
-        case 'z':
-            rightFingerBase1 = (rightFingerBase1 - 5) % 360;
-            break;
-        case 'Z':
-            rightFingerBase1 = (rightFingerBase1 + 5) % 360;
-            break;
-        case 'x':
-            rightFingerUp1 = (rightFingerUp1 - 5) % 360;
-            break;
-        case 'X':
-            rightFingerUp1 = (rightFingerUp1 + 5) % 360;
-            break;
-
-        // Left Finger 2 Control
-        case 'c':
-            rightFingerBase2 = (rightFingerBase2 - 5) % 360;
-            break;
-        case 'C':
-            rightFingerBase2 = (rightFingerBase2 + 5) % 360;
-            break;
         case 'v':
-            rightFingerUp2 = (rightFingerUp2 - 5) % 360;
+            if(rightKnee < 90)
+                rightKnee += 5;
             break;
         case 'V':
-            rightFingerUp2 = (rightFingerUp2 + 5) % 360;
-            break;
-
-        // Left Finger 3 Control
-        case 'n':
-            rightFingerBase3 = (rightFingerBase3 - 5) % 360;
-            break;
-        case 'N':
-            rightFingerBase3 = (rightFingerBase3 + 5) % 360;
-            break;
-        case 'm':
-            rightFingerUp3 = (rightFingerUp3 - 5) % 360;
-            break;
-        case 'M':
-            rightFingerUp3 = (rightFingerUp3 + 5) % 360;
-            break;
-
-        // Left Finger 4 Control
-        case '[':
-            rightFingerBase4 = (rightFingerBase4 - 5) % 360;
-            break;
-        case '{':
-            rightFingerBase4 = (rightFingerBase4 + 5) % 360;
-            break;
-        case ']':
-            rightFingerUp4 = (rightFingerUp4 - 5) % 360;
-            break;
-        case '}':
-            rightFingerUp4 = (rightFingerUp4 + 5) % 360;
-            break;
-
-        // Left Finger 5 Control
-        case ';':
-            rightFingerBase5 = (rightFingerBase5 - 5) % 360;
-            break;
-        case ':':
-            rightFingerBase5 = (rightFingerBase5 + 5) % 360;
-            break;
-        case '/':
-            rightFingerUp5 = (rightFingerUp5 - 5) % 360;
-            break;
-        case '?':
-            rightFingerUp5 = (rightFingerUp5 + 5) % 360;
+            if(rightKnee > 0)
+                rightKnee -= 5;
             break;
 
         case 27:
             exit(0);
+
         default:
             break;
-
     }
     glutPostRedisplay();
 }
