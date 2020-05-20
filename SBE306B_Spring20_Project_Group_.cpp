@@ -43,11 +43,13 @@ static int kick_state = 1;
 static float totalJumpDistance = 0.025 * 40 * 2;
 static int isJump = false;
 
-//box Model
+// box Model
 Model box("data/taburet1_update.obj");
+// Ball Model
+Model ball("data/soccerball.obj");
 
-//blah blah model
-Model obj("data/dolphins.obj");
+// Dolphin model
+Model dolphin("data/dolphins.obj");
 
 int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
@@ -58,7 +60,6 @@ double up[] = { 0, 1, 0 };
 double direction[3];
 double speed = 0.1;
 
-void init();
 void display();
 void reshape(int w, int h);
 void keyboard(unsigned char key, int x, int y);
@@ -115,7 +116,8 @@ int main(int argc, char **argv)
 
     //Models scaling
     box.scale(1.5);
-    obj.scale(1.5);
+    dolphin.scale(1.5);
+    ball.scale(0.5);
 
     glutCreateMenu(Choose_texture);
         glutAddMenuEntry("Floor 1",1);
@@ -189,14 +191,24 @@ void createFullScene()
 
         // Draw box
         glPushMatrix();
-            glTranslatef(4,-0.4,0);
+            glTranslatef(4,-0.4,3.5);
+            glTranslatef(-1.0,0.0,0.0);
+            glRotatef(90, 0.0, 1.0, 0.0);
+            glTranslatef(1.0,0.0,0.0);
             box.draw();
         glPopMatrix();
-        obj.draw();
+
+        dolphin.draw();
+
+        // Draw ball
+        glPushMatrix();
+            glTranslatef(-5.3,-1.0, 3.2);
+            ball.draw();
+        glPopMatrix();
 
         // Create The Full Body
         // The Translation Movement For the Whole Body
-        glTranslatef(-4.0, 1.0, 0.0);
+        glTranslatef(-5.0, 1.0, 0.0);
         glTranslatef(forwardOffset, jumpOffset, 3.0);
         glRotatef(90, 0.0, 1.0, 0.0);
 
