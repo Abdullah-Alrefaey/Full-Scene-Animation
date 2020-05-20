@@ -2,7 +2,6 @@ include(CheckIncludeFiles)
 cmake_minimum_required(VERSION 3.16) # common to every CLion project
 project(Full-Scene-Animation) # project name
 
-
 if (UNIX)
     set(OpenGlLinkers -lglut -lGLU -lGL) # setting all the Glut libraries as one variable.
     ################################################
@@ -13,7 +12,11 @@ if (UNIX)
     configure_file(data/taburet1_update.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
     configure_file(data/dolphins.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
     configure_file(data/dolphins.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
-    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp src/startRendering.cpp src/texture.cpp src/imageloader.cpp src/objLoader.cpp src/glm.cpp) #common to all clion project
+
+    # Common to all CLion project
+    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp
+                   src/startRendering.cpp src/texture.cpp src/imageloader.cpp
+                   src/objLoader.cpp src/glm.cpp)
     target_link_libraries(Full-Scene-Animation ${OpenGlLinkers}) # linking opengl libraries to the project
     #################################################
 endif ()
@@ -41,6 +44,7 @@ if (WIN32)
     endif(NOT OPENGL_FOUND)
 
     link_libraries(${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} --verbose)
+
     configure_file(data/Floor1.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(data/Floor2.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(data/Floor3.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
@@ -49,6 +53,9 @@ if (WIN32)
     configure_file(data/dolphins.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(data/dolphins.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
 
-    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp src/startRendering.cpp src/texture.cpp src/imageloader.cpp src/objLoader.cpp src/glm.cpp)
+    # Common to all CLion project
+    add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp
+                   src/startRendering.cpp src/texture.cpp src/imageloader.cpp
+                   src/objLoader.cpp src/glm.cpp)
 
 endif ()
