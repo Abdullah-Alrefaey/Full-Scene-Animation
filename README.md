@@ -70,39 +70,39 @@ Now lets talk about each type and see how it looks in the following GIFs.
 ### 1. Walking Forward
 To apply this animation, three joints is rotated (hip, knee, shoulder) with increasing the coordinates of the body in the same direction he wants to move along. Also this movement is limited by the dimensions of the ground so the robot can't walk outside the floor.
 
-![move forward](images/forward.gif)
+![Walking Forward](results/WalkingForward.gif)
 
 ### 2. Walking Backward
 The same concept as walking forward but the joints rotates in the opposite direction as well as the coordinates of the body decreases in the opposite direction.
 
-![move backward](images/backward.gif)
+![Walking Backward](results/WalkingBackward.gif)
 
 ### 3.Jumping
 As shown on the gif three joints (knee, elbow and shoulder) are rotated while jumping and the coordinates of the body is changing and return to the original state.
 
-![jump](images/jump.gif)
+![Jumping](results/Jumping.gif)
 
 ### 4. Jump Forward
 This animation is made by mixing between the jumping and moving forward animations.
 
-![Jump Over](images/jumpover.gif)
+![Jumping Over](results/JumpingOver.gif)
 
 ### 5. Kicking a ball
 This type of animation has 2 cases, one without interacting with the table and the other by interacting with it.
 
 ##### Case #1: Kicking the ball on the ground
 This is applied by moving the right leg backward then forward and after it reaches the ball, the ball is kicked as shown in the GIF. As you see the distance between the ball and the table is too large, so the ball will fall on the ground.
-![Kick ](images/kick.gif)
+![Kick On Ground](results/KickOnGround.gif)
 
 ##### Case #2: Kicking the ball on the table
 This is the same animation as above exactly but here the ball is close to the table, so after kicking it, the ball will fall on the table.
 
-![Kick above table ](images/kick1.gif)
+![Kick On Table](results/KickOnTable.gif)
 
 ## Texture Mapping
 We apply three different textures, and we change between them using a menu binned to the right mouse button.
 
-![texture](images/texture.gif)
+![Texture Mapping](results/TextureMapping.gif)
 
 ## Loading External Objects
 As shown from the previous GIFs we upload two different objects.  
