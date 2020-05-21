@@ -823,6 +823,21 @@ void jumpOver(int heightValue)
 
 void kick(int kickValue)
 {
+    /*
+     *** Function Description:
+     *   This function is responsible for controlling the ball movement
+     *
+     *** Cases:
+     *   Case 1: Move the right leg and the right knee backward to 45 degrees
+     *   Case 2: Move the right leg and the right knee forward to -15 degrees.
+     *            Then check if the ball is:
+     *            - Close to the body -> Case 3
+     *            - Far from the body -> Case 4.
+     *   Case 3: Check if the distance between the ball and the table is:
+     *           - Close -> kick the ball and put it above the table.
+     *           - Far -> kick the ball and return it to the ground
+     *   Case 4: Move the right leg and the right knee backward to the original state.
+     */
     switch (kick_state)
     {
         case 1:
@@ -847,10 +862,8 @@ void kick(int kickValue)
                     rightKnee -= 1;
                 }
             }
-            else {
-                // Now rightLeg: -15
-                // Now rightKnee: 0
-
+            else
+            {
                 // If the ball exists
                 dist = abs(xBall) - abs(xBody);
                 cout<<"Distance Between Ball and Body "<<dist<<endl;
@@ -870,13 +883,17 @@ void kick(int kickValue)
         case 3:
             if (kickDistance < float(kickValue))
             {
+                // Increase the distance value
                 kickDistance += 0.1;
+
+                // Check If the ball is near to the table
                 dist_BallTable = xTable - xBall;
                 cout<<"Distance Between Ball and Table "<<dist_BallTable<<endl;
                 if ((dist_BallTable < 6.2f))
                 {
                     cout << "Table Exists" << endl;
                     xBall += 0.1;
+                    // Kick the ball up and down again on the table
                     if (kickDistance < float(kickValue)/1.5) {
                         yBall += 0.05;
                     } else {
@@ -886,6 +903,7 @@ void kick(int kickValue)
                 else
                 {
                     // Change Ball Positions
+                    // Normal Case: Up and Down to the ground
                     xBall += 0.1;
                     if (kickDistance < float(kickValue)/2) {
                         yBall += 0.02;
@@ -893,20 +911,15 @@ void kick(int kickValue)
                         yBall -= 0.02;
                     }
                 }
-//                // Change Ball Positions
-//                xBall += 0.1;
-//                if (kickDistance < float(kickValue)/2) {
-//                    yBall += 0.02;
-//                } else {
-//                    yBall -= 0.02;
-//                }
 
+                // Return the rightLeg to its original state
                 if (rightLeg < 0) {
                     rightLeg += 1;
                 }
             }
             else {
                 cout<<"Ball has reached the target"<<endl;
+                // Reset the distance to check on it on the next kick
                 kickDistance = 0;
                 kick_state = 0;
             }
