@@ -1,5 +1,5 @@
 include(CheckIncludeFiles)
-cmake_minimum_required(VERSION 3.16) # common to every CLion project
+cmake_minimum_required(VERSION 3.15) # common to every CLion project
 project(Full-Scene-Animation) # project name
 
 if (UNIX)
