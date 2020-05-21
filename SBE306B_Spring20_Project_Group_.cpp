@@ -24,6 +24,9 @@ static int leftFingerUp1 = 0, leftFingerUp2  = 0, leftFingerUp3 = 0, leftFingerU
 static int rightFingerBase1 = 0, rightFingerBase2 = 0, rightFingerBase3 = 0, rightFingerBase4 = 0, rightFingerBase5 = 0;
 static int rightFingerUp1 = 0, rightFingerUp2  = 0, rightFingerUp3 = 0, rightFingerUp4 = 0, rightFingerUp5 = 0;
 
+// Ground Position
+static float ground = 1.0;
+
 // Body Positions
 static float xBody = -5;
 static float yBody = 1;
@@ -39,29 +42,20 @@ static float xTable = 5;
 static float yTable = -0.7;
 static float zTable = 3.5;
 
-static float ground = 1.0;
+static float dist_BallBody;         // Distance Between Ball and Body
+static float dist_BallTable;        // Distance Between Ball and Table
 
-// Distance Between Ball and Body
-static float dist;
-// Distance Between Ball and Table
-static float dist_BallTable;
-
-// Distance that will increase when kick the ball
+// The incremented distance of the ball each frame
 static float kickDistance = 0;
 
-// Variables for Jumping Distance
-static float boxHeight = 1;
+// The position that the body will return to when jumping over
 static float returningPosition = 1;
-static bool foundObject = false;
 
-// If state = 1 -> jumping to up
-// If state = -1 -> returning to ground
 static int jump_state = 1;
 static int leg_state = 1;
 static int kick_state = 1;
-static float totalJumpDistance = 0.025 * 40 * 2;
-static int isJump = false;
 
+// Objects instances
 Model table("data/taburet1_update.obj");        // table Model
 Model ball("data/soccerball.obj");              // Ball Model
 
@@ -113,6 +107,7 @@ void moveBack();
 void specialKeys(int key, int x, int y);
 void jump(int value);
 void walkForward(int value);
+void walkBackward(int value);
 void jumpOver(int value);
 void Choose_texture(int id);
 
@@ -121,7 +116,7 @@ int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(900, 700);
+    glutInitWindowSize(1000, 700);
     glutInitWindowPosition(100, 10);
     glutCreateWindow("Animation Of A Full Scene");
 
@@ -566,28 +561,65 @@ void specialKeys(int key, int x, int y)
 
 void jump(int heightValue)
 {
+    /*
+     * Description:
+     * This function is responsible for the jumping of the body in a specific height
+     * and return to the ground in the same position.
+     *
+     * Cases:
+     * Case 1: Rotate the shoulders, elbows and knees
+     *         Rotate the legs and knees
+     *         Increase the yPosition of the Body to the given height
+     *
+     * Case 2: Reverse the rotations of the body joints
+     *         Decrease the yPosition of the Body to the ground.
+     *
+     * Case 0: The body has returned to the ground.
+     */
+
     switch (jump_state)
     {
         // Jumping
         case 1:
-            if (yBody < float(heightValue)) {
+            if (yBody < float(heightValue))
+            {
                 yBody += 0.05;
+
+                // Moving the shoulders
                 leftShoulderY += 1;
                 rightShoulderY -= 1;
+                leftShoulderZ -= 1;
+                rightShoulderZ += 1;
+
+                // Moving the elbows
+                leftElbow -= 1;
+                rightElbow += 1;
+
+                // Moving the knees
                 leftKnee += 1;
                 rightKnee += 1;
             } else {
-                jump_state = -1;
+                jump_state = 2;
             }
             glutTimerFunc(1000/60, jump, heightValue);
             break;
 
         // Returning to ground
-        case -1:
+        case 2:
             if(yBody > ground) {
                 yBody -= 0.05;
+
+                // Moving the shoulders
                 leftShoulderY -= 1;
                 rightShoulderY += 1;
+                leftShoulderZ += 1;
+                rightShoulderZ -= 1;
+
+                // Moving the elbows
+                leftElbow += 1;
+                rightElbow -= 1;
+
+                // Moving the knees
                 leftKnee -= 1;
                 rightKnee -= 1;
             } else if (yBody < ground) {
@@ -607,17 +639,117 @@ void jump(int heightValue)
     glutPostRedisplay();
 }
 
+void jumpOver(int heightValue)
+{
+    /*
+     * Description:
+     * This function is responsible for the jumping of the body with
+     * moving it a little forward (such as jumping over an object).
+     *
+     * Cases:
+     * Case 1: Rotate the shoulders, elbows and knees
+     *         Rotate the legs and knees
+     *         Increase the yPosition of the Body to the half of the given height.
+     *         Increase the xPosition of the Body to the given height.
+     *
+     * Case 2: Reverse the rotations of the body joints
+     *         Decrease the yPosition of the Body to the ground.
+     *         Increase the xPosition of the Body to the given height.
+     *
+     * Case 0: The body has returned to the ground.
+     */
+
+    switch (jump_state)
+    {
+        // Jumping
+        case 1:
+            if (yBody < float(heightValue))
+            {
+                yBody += 0.05;
+                xBody += 0.025;
+
+                // Moving the shoulders
+                leftShoulderY += 1;
+                rightShoulderY -= 1;
+                leftShoulderZ -= 1;
+                rightShoulderZ += 1;
+
+                // Moving the elbows
+                leftElbow -= 1;
+                rightElbow += 1;
+
+                // Moving the knees
+                leftKnee += 1;
+                rightKnee += 1;
+            } else {
+                jump_state = 2;
+            }
+            glutTimerFunc(1000/60, jumpOver, heightValue);
+            break;
+
+        // Returning Back
+        case 2:
+            if(yBody > returningPosition)
+            {
+                yBody -= 0.05;
+                xBody += 0.025;
+
+                // Moving the shoulders
+                leftShoulderY -= 1;
+                rightShoulderY += 1;
+                leftShoulderZ += 1;
+                rightShoulderZ -= 1;
+
+                // Moving the elbows
+                leftElbow += 1;
+                rightElbow -= 1;
+
+                // Moving the knees
+                leftKnee -= 1;
+                rightKnee -= 1;
+            } else if (yBody < returningPosition) {
+                jump_state = 0;
+            }
+            glutTimerFunc(1000/60, jumpOver, heightValue);
+            break;
+
+        // Returned to ground
+        case 0:
+            jump_state = 1;
+            break;
+
+        default:
+            break;
+    }
+    glutPostRedisplay();
+}
+
 void walkForward(int value)
 {
     /*
-     * leg_state 1: Moving The Right Leg and Knee Forward
-     *             Moving The Left Leg and Knee Backward
-     * leg_state 2: Finished Moving The Right Leg and Knee
-     *             Finished Moving The Right Leg and Knee
-     *             And Start Moving in x-direction
+     * Description:
+     * This function is responsible for moving the body forward in one direction.
      *
+     * First we check if the body reaches the end of the floor or no, then
+     * the body should stop and return to normal state.
+     *
+     * Cases:
+     * Case 1: Move the body in the forward direction
+     *         Move rhe right leg and the right knee forward.
+     *         Move the left leg and the left knee backward.
+     *         Move the right arm forward.
+     *         Move the left arm backward.
+     *
+     * Case 2: Continue moving the body in the forward direction
+     *         Move rhe right leg and the right knee backward.
+     *         Move the left leg and the left knee forward.
+     *         Move the right arm backward.
+     *         Move the left arm forward.
+     *
+     * Case 3: The body reached the end of the floor
+     *
+     * Case 4: The walking process has finished
      */
-
 
     // Reached End of the floor
     if (xBody > 11.5)
@@ -629,13 +761,16 @@ void walkForward(int value)
         rightKnee = 0;
         leftLeg = 0;
         leftKnee = 0;
+
+        leftShoulderY = -90;
+        rightShoulderY = 90;
+        leftShoulderZ = 0;
+        rightShoulderZ = 0;
     }
 
     switch (leg_state)
     {
         case 1:
-//            cout<<"leg_state: "<<leg_state<<" Right Leg: "<<rightLeg;
-//            cout<<" Left Leg: "<<leftLeg<<endl;
             if (rightLeg > -45) {
                 // Move Body
                 xBody += 0.03;
@@ -647,7 +782,6 @@ void walkForward(int value)
                 // Move Left Leg Backward
                 if (leftLeg < 30)
                 {
-//                    cout<<"leftLeg "<<leftLeg<<endl;
                     leftLeg += 1;
                     leftKnee += 1;
                 }
@@ -661,12 +795,10 @@ void walkForward(int value)
             } else {
                 leg_state = 2;
             }
-            glutTimerFunc(1000/60, walkForward, 0);
+            glutTimerFunc(10, walkForward, 0);
             break;
 
         case 2:
-//            cout<<"leg_state: "<<leg_state<<"  Right Leg: "<<rightLeg;
-//            cout<<" Left Leg: "<<leftLeg<<endl;
             if (rightLeg < 0) {
                 // Move Body
                 xBody += 0.03;
@@ -692,11 +824,12 @@ void walkForward(int value)
             else {
                 leg_state = 0;
             }
-            glutTimerFunc(1000/60, walkForward, 0);
+            glutTimerFunc(10, walkForward, 0);
             break;
 
         case 3:
-            cout<<"Your Reached the end "<<xBody<<endl;
+            cout<<"Your Reached the end of the floor"<<xBody<<endl;
+            leg_state = 1;
             break;
 
         case 0:
@@ -710,115 +843,126 @@ void walkForward(int value)
     glutPostRedisplay();
 }
 
-void jumpOver(int heightValue)
+void walkBackward(int value)
 {
-    // Check Distance between object and robot
-    // Check if the object is near
+    /*
+     * Description:
+     * This function is responsible for moving the body backward in one direction.
+     *
+     * First we check if the body reaches the start of the floor or no, then
+     * the body should stop and return to normal state.
+     *
+     * Cases:
+     * Case 1: Move the body in the backward direction.
+     *         Move rhe right leg and the right knee forward.
+     *         Move the left leg and the left knee backward.
+     *         Move the right arm forward.
+     *         Move the left arm backward.
+     *
+     * Case 2: Continue moving the body in the forward direction
+     *         Move rhe right leg and the right knee backward.
+     *         Move the left leg and the left knee forward.
+     *         Move the right arm backward.
+     *         Move the left arm forward.
+     *
+     * Case 3: The body reached the start of the floor
+     *
+     * Case 4: The walking process has finished
+     */
 
-//    if (10 - xBody < totalJumpDistance) {
-//        foundObject = true;
-//        returningPosition = boxHeight;
-//    }
-//
-//    if (!foundObject)
-//    {
-//        // DO JUMP
-//
-//    }
-
-    if (10 - xBody > totalJumpDistance)
+    // Reached Start of the floor
+    if (xBody < -6)
     {
-        switch (jump_state)
-        {
-            // Jumping
-            case 1:
-                if (yBody < float(heightValue)) {
-                    yBody += 0.05;
-                    xBody += 0.025;
-                    leftShoulderY += 1;
-                    rightShoulderY -= 1;
+        cout<<"xBody: "<<xBody<<endl;
+        leg_state = 3;
+
+        // Return Body to normal state
+        rightLeg = 0;
+        rightKnee = 0;
+        leftLeg = 0;
+        leftKnee = 0;
+
+        leftShoulderY = -90;
+        rightShoulderY = 90;
+        leftShoulderZ = 0;
+        rightShoulderZ = 0;
+    }
+
+    switch (leg_state)
+    {
+        case 1:
+            if (rightLeg < 45)
+            {
+                // Move Body
+                xBody -= 0.03;
+
+                // Move Right Leg Backward
+                rightLeg += 1;
+                rightKnee += 1;
+
+                // Move Left Leg Forward
+                if (leftLeg > -30)
+                {
+                    leftLeg -= 1;
                     leftKnee += 1;
-                    rightKnee += 1;
-                } else {
-                    jump_state = -1;
                 }
-                glutTimerFunc(1000/60, jumpOver, heightValue);
-                break;
 
-            // Returning Back
-            case -1:
-                if(yBody > returningPosition) {
-                    yBody -= 0.05;
-                    xBody += 0.025;
-                    leftShoulderY -= 1;
-                    rightShoulderY += 1;
+                // Move Arms
+                if (rightShoulderZ > -45)
+                {
+                    rightShoulderZ -= 1;
+                    leftShoulderZ -= 1;
+                }
+            } else {
+                leg_state = 2;
+            }
+            glutTimerFunc(10, walkBackward, 0);
+            break;
+
+        case 2:
+            if (rightLeg > 0)
+            {
+                // Move Body
+                xBody -= 0.03;
+
+                // Move Right Leg
+                rightLeg -= 1;
+                rightKnee -= 1;
+
+                // Return Left Leg
+                if (leftLeg < 0)
+                {
+                    leftLeg += 1;
                     leftKnee -= 1;
-                    rightKnee -= 1;
-                } else if (yBody < returningPosition) {
-                    jump_state = 0;
                 }
-                glutTimerFunc(1000/60, jumpOver, heightValue);
-                break;
 
-                // Returned to ground
-            case 0:
-                jump_state = 1;
-                break;
+                // Return Arms
+                if (rightShoulderZ < 0)
+                {
+                    rightShoulderZ += 1;
+                    leftShoulderZ += 1;
+                }
+            }
+            else {
+                leg_state = 0;
+            }
+            glutTimerFunc(10, walkBackward, 0);
+            break;
 
-            default:
-                break;
-        }
-        glutPostRedisplay();
+        case 3:
+            cout<<"Your Reached the start of the floor "<<xBody<<endl;
+            leg_state = 1;
+            break;
+
+        case 0:
+            leg_state = 1;
+            break;
+
+        default:
+            break;
+
     }
-
-    else
-    {
-        foundObject = true;
-        returningPosition = boxHeight;
-        glutTimerFunc(1000/60, jumpOver, heightValue);
-    }
-
-//    switch (state)
-//    {
-//        // Jumping
-//        case 1:
-//            if (yBody < heightValue) {
-//                yBody += 0.05;
-//                xBody += 0.025;
-//                leftShoulderY += 1;
-//                rightShoulderY -= 1;
-//                leftKnee += 1;
-//                rightKnee += 1;
-//            } else {
-//                state = -1;
-//            }
-//            glutTimerFunc(1000/60, jumpOver, heightValue);
-//            break;
-//
-//            // Returning to ground
-//        case -1:
-//            if(yBody > 0) {
-//                yBody -= 0.05;
-//                xBody += 0.025;
-//                leftShoulderY -= 1;
-//                rightShoulderY += 1;
-//                leftKnee -= 1;
-//                rightKnee -= 1;
-//            } else if (yBody < 0) {
-//                state = 0;
-//            }
-//            glutTimerFunc(1000/60, jumpOver, heightValue);
-//            break;
-//
-//            // Returned to ground
-//        case 0:
-//            state = 1;
-//            break;
-//
-//        default:
-//            break;
-//    }
-//    glutPostRedisplay();
+    glutPostRedisplay();
 }
 
 void kick(int kickValue)
@@ -829,15 +973,21 @@ void kick(int kickValue)
      *
      *** Cases:
      *   Case 1: Move the right leg and the right knee backward to 45 degrees
+     *
      *   Case 2: Move the right leg and the right knee forward to -15 degrees.
      *            Then check if the ball is:
      *            - Close to the body -> Case 3
      *            - Far from the body -> Case 4.
+     *
      *   Case 3: Check if the distance between the ball and the table is:
      *           - Close -> kick the ball and put it above the table.
      *           - Far -> kick the ball and return it to the ground
+     *
      *   Case 4: Move the right leg and the right knee backward to the original state.
+     *
+     *   Case 0: The kicking has ended.
      */
+
     switch (kick_state)
     {
         case 1:
@@ -845,10 +995,7 @@ void kick(int kickValue)
                 rightLeg += 1;
                 rightKnee += 1;
             } else {
-                // rightLeg: 45
-                // rightKnee: 45
                 kick_state = 2;
-                cout<<"Leg is Back State Now"<<endl;
             }
             glutTimerFunc(10, kick,kickValue);
             break;
@@ -865,9 +1012,9 @@ void kick(int kickValue)
             else
             {
                 // If the ball exists
-                dist = abs(xBall) - abs(xBody);
-                cout<<"Distance Between Ball and Body "<<dist<<endl;
-                if (dist > 0.7f && dist < 1.4f)
+                dist_BallBody = abs(xBall) - abs(xBody);
+                cout<<"Distance Between Ball and Body "<<dist_BallBody<<endl;
+                if (dist_BallBody > 0.7f && dist_BallBody < 1.4f)
                 {
                     cout<<"Ball Exists"<<endl;
                     kick_state = 3;
@@ -958,9 +1105,13 @@ void keyboard(unsigned char key, int x, int y)
             break;
 
         // walkForward Case
-        // Change to d
         case 'd':
             walkForward(0);
+            break;
+
+        // walkForward Case
+        case 'a':
+            walkBackward(0);
             break;
 
         // Kick Case
@@ -973,19 +1124,19 @@ void keyboard(unsigned char key, int x, int y)
             jumpOver(3);
             break;
 
-        case '1':
+        case '+':
             moveForward();
             break;
-        case '2':
+        case '-':
             moveBack();
             break;
 
         // Whole Body
         case 'b':
-            mainBody = (mainBody - 5) % 360;
+            mainBody -= 5;
             break;
         case 'B':
-            mainBody = (mainBody + 5) % 360;
+            mainBody += 5;
             break;
 
         // Left ShoulderY
@@ -1126,6 +1277,11 @@ static void motion(int x, int y)
 
 void Choose_texture(int id)
 {
+    /*
+     * Description:
+     *     This function is responsible for changing the texture of the floor
+     *     using a drop menu by the right click on the mouse.
+     */
     switch(id)
     {
         case 1:
