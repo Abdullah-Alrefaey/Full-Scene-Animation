@@ -36,13 +36,15 @@ static float zBall = 3.3;
 
 // Table Positions
 static float xTable = 5;
-static float yTable = -0.4;
+static float yTable = -0.7;
 static float zTable = 3.5;
 
 static float ground = 1.0;
 
 // Distance Between Ball and Body
-float dist;
+static float dist;
+// Distance Between Ball and Table
+static float dist_BallTable;
 
 // Distance that will increase when kick the ball
 static float kickDistance = 0;
@@ -62,7 +64,6 @@ static int isJump = false;
 
 Model table("data/taburet1_update.obj");        // table Model
 Model ball("data/soccerball.obj");              // Ball Model
-Model dolphin("data/dolphins.obj");             // Dolphin model
 
 int moving, startx, starty;
 GLfloat angle = 0.0;        // In degrees
@@ -129,7 +130,6 @@ int main(int argc, char **argv)
 
     // Models scaling
     table.scale(1.5);
-    dolphin.scale(1.5);
     ball.scale(0.5);
 
     glutCreateMenu(Choose_texture);
@@ -209,15 +209,6 @@ void createFullScene()
             glRotatef(90, 0.0, 1.0, 0.0);
             glTranslatef(1.0,0.0,0.0);
             table.draw();
-        glPopMatrix();
-
-        // Draw Dolphin
-        glPushMatrix();
-//            glTranslatef(4,-0.4,3.5);
-//            glTranslatef(-1.0,0.0,0.0);
-//            glRotatef(90, 0.0, 1.0, 0.0);
-//            glTranslatef(1.0,0.0,0.0);
-            dolphin.draw();
         glPopMatrix();
 
         // Draw ball
@@ -626,6 +617,20 @@ void walkForward(int value)
      *             And Start Moving in x-direction
      *
      */
+
+
+    // Reached End of the floor
+    if (xBody > 11.5)
+    {
+        leg_state = 3;
+
+        // Return Body to normal state
+        rightLeg = 0;
+        rightKnee = 0;
+        leftLeg = 0;
+        leftKnee = 0;
+    }
+
     switch (leg_state)
     {
         case 1:
@@ -642,7 +647,7 @@ void walkForward(int value)
                 // Move Left Leg Backward
                 if (leftLeg < 30)
                 {
-                    cout<<"leftLeg "<<leftLeg<<endl;
+//                    cout<<"leftLeg "<<leftLeg<<endl;
                     leftLeg += 1;
                     leftKnee += 1;
                 }
@@ -688,6 +693,10 @@ void walkForward(int value)
                 leg_state = 0;
             }
             glutTimerFunc(1000/60, walkForward, 0);
+            break;
+
+        case 3:
+            cout<<"Your Reached the end "<<xBody<<endl;
             break;
 
         case 0:
@@ -845,7 +854,7 @@ void kick(int kickValue)
                 // If the ball exists
                 dist = abs(xBall) - abs(xBody);
                 cout<<"Distance Between Ball and Body "<<dist<<endl;
-                if (dist > 1.0f && dist < 1.4f)
+                if (dist > 0.7f && dist < 1.4f)
                 {
                     cout<<"Ball Exists"<<endl;
                     kick_state = 3;
@@ -859,16 +868,38 @@ void kick(int kickValue)
 
         // If the ball exists -> Return Leg to Original State and Move the Ball
         case 3:
-            if (kickDistance < float(kickValue)) {
+            if (kickDistance < float(kickValue))
+            {
                 kickDistance += 0.1;
-
-                // Change Ball Positions
-                xBall += 0.1;
-                if (kickDistance < float(kickValue)/2) {
-                    yBall += 0.02;
-                } else {
-                    yBall -= 0.02;
+                dist_BallTable = xTable - xBall;
+                cout<<"Distance Between Ball and Table "<<dist_BallTable<<endl;
+                if ((dist_BallTable < 6.2f))
+                {
+                    cout << "Table Exists" << endl;
+                    xBall += 0.1;
+                    if (kickDistance < float(kickValue)/1.5) {
+                        yBall += 0.05;
+                    } else {
+                        yBall -= 0.009;
+                    }
                 }
+                else
+                {
+                    // Change Ball Positions
+                    xBall += 0.1;
+                    if (kickDistance < float(kickValue)/2) {
+                        yBall += 0.02;
+                    } else {
+                        yBall -= 0.02;
+                    }
+                }
+//                // Change Ball Positions
+//                xBall += 0.1;
+//                if (kickDistance < float(kickValue)/2) {
+//                    yBall += 0.02;
+//                } else {
+//                    yBall -= 0.02;
+//                }
 
                 if (rightLeg < 0) {
                     rightLeg += 1;
@@ -921,7 +952,7 @@ void keyboard(unsigned char key, int x, int y)
 
         // Kick Case
         case 'k':
-            kick(4);
+            kick(5);
             break;       
 
         // Long Jump
