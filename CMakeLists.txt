@@ -10,8 +10,6 @@ if (UNIX)
     configure_file(data/Floor3.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
     configure_file(data/taburet1_update.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
     configure_file(data/taburet1_update.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
-    configure_file(data/dolphins.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
-    configure_file(data/dolphins.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
 
     # Common to all CLion project
     add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp
@@ -50,8 +48,6 @@ if (WIN32)
     configure_file(data/Floor3.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(data/taburet1_update.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
     configure_file(data/taburet1_update.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
-    configure_file(data/dolphins.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
-    configure_file(data/dolphins.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY WIN32)
 
     # Common to all CLion project
     add_executable(SBE306B_Spring20_Project_Group_ SBE306B_Spring20_Project_Group_.cpp
