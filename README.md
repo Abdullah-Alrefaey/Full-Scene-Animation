@@ -27,7 +27,7 @@ The main target of this project is:
 * Make an interaction between the robotic body and an object.
 
 ## Description
-This project is about .....
+This project is about ..... some blah blah here
 
 ## Basic Usage (Keyboard Shortcuts)
 Using the keyboard in upper or lower case, you could test the movement of the body and its animation.
@@ -56,10 +56,10 @@ Using the keyboard in upper or lower case, you could test the movement of the bo
 ## Animations
 We applied three different types of animations to the whole scene. Some of the animations are related to the body without interacting with any external object and the others by interacting with an external objects such as the ball and table.
 
-#### The idea of the animation
+### The idea of the animation
 The basic idea of applying an animation to a robotic body or to any object is to change its state or its position in different steps and swapping the buffer in each frame rapidly. This will make the scene looks like it's animating.
 
-#### Types of animations
+### Types of animations
 - Walking forward
 - Walking backward
 - Jumping
@@ -77,7 +77,7 @@ The same concept as walking forward but the joints rotates in the opposite direc
 
 ![Walking Backward](results/WalkingBackward.gif)
 
-### 3.Jumping
+### 3. Jumping
 As shown on the gif three joints (knee, elbow and shoulder) are rotated while jumping and the coordinates of the body is changing and return to the original state.
 
 ![Jumping](results/Jumping.gif)
@@ -106,13 +106,17 @@ We apply three different textures, and we change between them using a menu binne
 
 ## Loading External Objects
 As shown from the previous GIFs we upload two different objects.  
-
-
+some blah blah here
 
 ## Lighting
-
+some blah blah here
 
 
 ## Issues
+| Issue                                                                   | Solution                             | 
+|-------------------------------------------------------------------------|--------------------------------------|
+| Reflection of the view when moving the camera under the floor           | Applying the lighting and coloring   |
+| Some textures were not showing as they should be as the real JPEG image | Converting the bit depth of the .bmp image from 32 to 24 |
+| Linking the animation of the body with the object                       | Calculation of the difference distances between them and some conditions |
 
 ## Conclusion
