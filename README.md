@@ -102,6 +102,8 @@ This is the same animation as above exactly but here the ball is close to the ta
 ## Texture Mapping
 We apply three different textures, and we change between them using a menu binned to the right mouse button.
 
+Images are saved in a BMP format at a 128 * 128 pixels. Loaded and Binded to it`s Texture ID, Which is then Rendered to fit the Vertices of the floor square. Repeat Mode is activated allowing the compiler to repeat the 128*128 pixels along the whole floor. 
+
 ![Texture Mapping](results/TextureMapping.gif)
 
 ## Loading External Objects
@@ -113,7 +115,7 @@ some blah blah here
 
 
 ## Issues
-| Issue                                                                   | Solution                             | 
+| Issue                                                                   | Solution                             |
 |-------------------------------------------------------------------------|--------------------------------------|
 | Reflection of the view when moving the camera under the floor           | Applying the lighting and coloring   |
 | Some textures were not showing as they should be as the real JPEG image | Converting the bit depth of the .bmp image from 32 to 24 |
