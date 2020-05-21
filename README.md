@@ -111,7 +111,8 @@ As shown from the previous GIFs we upload two different objects.
 some blah blah here
 
 ## Lighting
-some blah blah here
+
+Two Light sources are applied with a Diffuse mode and a white light, turning the scene from complete darkness to light.
 
 
 ## Issues
