@@ -235,7 +235,9 @@ void createFullScene()
             glScalef(1.2, 2.0, 0.5);
             glutWireCube(1.0);
         glPopMatrix();
-
+        //color
+        
+        //
         // Draw Left Arm
         glPushMatrix();
             createArm(1.3, 1.5, 0.0,
@@ -321,6 +323,7 @@ void createArm(float xShld, float yShld, float zShld,
                int baseAngle3, int upAngle3, int baseAngle4, int upAngle4,
                int baseAngle5, int upAngle5)
 {
+
     // Shoulder
     glTranslatef(xShld, yShld, zShld);
     glTranslatef (-xShldRotate, 0.0, 0.0);
@@ -329,6 +332,7 @@ void createArm(float xShld, float yShld, float zShld,
     glTranslatef (xShldRotate, 0.0, 0.0);
 
     glPushMatrix();
+        glColor3f(0,0,1);
         glScalef (1.0, 0.2, 0.5);
         glutWireCube (1.0);
     glPopMatrix();
