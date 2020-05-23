@@ -108,7 +108,7 @@ Images are saved in a BMP format at a 128 * 128 pixels. Loaded and Binded to it`
 
 ## Loading External Objects
 As shown from the previous GIFs we upload two different objects.  
-some blah blah here
+We use glm library to load object files of extension ".obj" which uses ".mtl" to color the object.
 
 ## Lighting
 
