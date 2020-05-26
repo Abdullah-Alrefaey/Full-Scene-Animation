@@ -132,6 +132,10 @@ Two Light sources are applied with a diffuse mode and a white light, turning the
 
 <br>
 
+[![Little red ridning hood](http://i.imgur.com/7YTMFQp.png)](https://vimeo.com/3514904 "Little red riding hood - Click to Watch!")
+
+with a **youtube** video embedded
+
 ## Issues
 | Issue                                                                   | Solution                             |
 |-------------------------------------------------------------------------|--------------------------------------|
