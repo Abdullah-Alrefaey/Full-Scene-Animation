@@ -132,9 +132,6 @@ Two Light sources are applied with a diffuse mode and a white light, turning the
 
 <br>
 
-[![Little red ridning hood](http://i.imgur.com/7YTMFQp.png)](https://vimeo.com/3514904 "Little red riding hood - Click to Watch!")
-
-with a **youtube** video embedded
 
 ## Issues
 | Issue                                                                   | Solution                             |
@@ -145,3 +142,8 @@ with a **youtube** video embedded
 
 ## Conclusion
 Briefly, the idea of this project is to apply the animation concept on a full-scene with a robotic body standing on a floor using `C++` with `openGL` API, `GLUT` and `GLM` libraries. We applied some features such as animating the robotic body and interacting with a ball. Also the ball interact with the table object. Three textures were added to the scene with an option to choose between anyone of them.
+
+##### Extra Video
+We recorded this video to represent the animation process and explain all the movements in a good way, hope you find it well.
+
+[![Full-Scene-Animation Video](results/Home.png)](https://drive.google.com/open?id=1st7jbzCd0UKHnGtgxq7NFzJgcxNcujGn "Full-Scene-Animation Video")
