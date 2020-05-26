@@ -1,5 +1,6 @@
 <h1 style="text-align: center;"> Full-Scene-Animation Project</h1>
 <h3 style="text-align: center;"> Submitted to: Dr. Ayman Eldeib</h3>
+<h3 style="text-align: center;"> 2019 - 2020</h3>
 <h4 style="text-align: center;"> Group ID: 05</h4>
 
 | Name                    | Section | B.N Number   | E-mail                        |
@@ -9,13 +10,6 @@
 | Remon Alber Fely        | 1       |           31 | remonalbear522@gmail.com      |
 | Salma Ayman Ahmed       | 1       |           37 | soayman9@gmail.com            |
 | Abdullah Mohammed Sabry | 2       |            8 | abdullah.m.alrefaey@gmail.com |
-
-<br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<h3 style="text-align: center;"> 2019 - 2020</h3>
-
-
----
 
 <div style="page-break-after: always;"></div>
 
