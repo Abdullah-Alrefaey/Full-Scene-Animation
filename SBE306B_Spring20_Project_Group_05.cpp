@@ -741,13 +741,12 @@ void jumpOver(int heightValue)
 
 void rotateBodyRight(int value)
 {
-//    tempAngle = value;
     cout<<"mainBody: "<<mainBody<<endl;
 
     if (mainBody > value) {
         mainBody -= 1;
         rCounter += 1;
-        glutTimerFunc(1000/60, rotateBodyRight, mainBody + rCounter - 90);
+        glutTimerFunc(10, rotateBodyRight, mainBody + rCounter - 90);
     } else {
         rCounter = 0;
     }
@@ -758,9 +757,12 @@ void rotateBodyRight(int value)
 void rotateBodyLeft(int value)
 {
     cout<<"mainBody: "<<mainBody<<endl;
-    if (mainBody < 0) {
+    if (mainBody < value) {
         mainBody += 1;
-        glutTimerFunc(1000/60, rotateBodyLeft, 90);
+        rCounter += 1;
+        glutTimerFunc(10, rotateBodyLeft, mainBody - rCounter + 90);
+    } else {
+        rCounter = 0;
     }
 
     glutPostRedisplay();
@@ -1239,7 +1241,7 @@ void keyboard(unsigned char key, int x, int y)
 //            mainBody -= 5;
             break;
         case 'B':
-            rotateBodyLeft(90);
+            rotateBodyLeft(mainBody + 90);
 //            mainBody += 5;
             break;
 
