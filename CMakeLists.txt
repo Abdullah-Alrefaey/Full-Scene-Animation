@@ -5,11 +5,6 @@ project(Full-Scene-Animation) # project name
 if (UNIX)
     set(OpenGlLinkers -lglut -lGLU -lGL) # setting all the Glut libraries as one variable.
     ################################################
-    configure_file(data/Floor1.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
-    configure_file(data/Floor2.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
-    configure_file(data/Floor3.bmp ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
-    configure_file(data/taburet1_update.obj ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
-    configure_file(data/taburet1_update.mtl ${CMAKE_CURRENT_BINARY_DIR} COPYONLY UNIX)
 
     # Common to all CLion project
     add_executable(SBE306B_Spring20_Project_Group_05 SBE306B_Spring20_Project_Group_05.cpp
