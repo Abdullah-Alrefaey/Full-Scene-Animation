@@ -56,6 +56,9 @@ static int leg_state = 1;
 static int kick_state = 1;
 static bool isTable = false;
 
+// Counter for rotating position
+static int rCounter = 0;
+
 // Objects instances
 Model table("data/taburet1_update.obj");        // table Model
 Model ball("data/soccerball.obj");              // Ball Model
@@ -738,10 +741,15 @@ void jumpOver(int heightValue)
 
 void rotateBodyRight(int value)
 {
+//    tempAngle = value;
     cout<<"mainBody: "<<mainBody<<endl;
-    if (mainBody > -90) {
+
+    if (mainBody > value) {
         mainBody -= 1;
-        glutTimerFunc(1000/60, rotateBodyRight, 90);
+        rCounter += 1;
+        glutTimerFunc(1000/60, rotateBodyRight, mainBody + rCounter - 90);
+    } else {
+        rCounter = 0;
     }
 
     glutPostRedisplay();
@@ -1227,7 +1235,7 @@ void keyboard(unsigned char key, int x, int y)
 
         // Whole Body
         case 'b':
-            rotateBodyRight(90);
+            rotateBodyRight( mainBody - 90);
 //            mainBody -= 5;
             break;
         case 'B':
