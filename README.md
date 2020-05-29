@@ -48,7 +48,7 @@ Using the keyboard in upper or lower case, you could test the movement of the bo
 * Kick :`'k'`
 
 ##### 2. Body Transformations:
-* Rotate the whole body: `'b'`
+* Rotate the whole body in the left and right direction: `'B'` and `'b'`
 * Moving the left and right shoulder aside: `'y'` and `'r'`
 * Moving the left and right shoulder forward: `'u'` and `'t'`
 * Moving the left and right elbow: `'h'` and `'f'`
@@ -65,20 +65,21 @@ Using the keyboard in upper or lower case, you could test the movement of the bo
 * Zoom In: `'+'`
 * Zoom Out: `'-'`
 
-#### Note On Using Keyboard
+#### Important Note On Using Keyboard And Animation
 Performing any animation movement has to be waited till the end of it. If you click on any key that executes any type of movement i.e. if you pressed 'space' which makes the robot jumps, please wait till the robot jump to the air and return back to the ground then click on other button. 
 
 This is just to let the animation be done successfully without any delay or corruption,  so please wait until the animation ends then perform the other movement.
 
 ## Animations
-We applied three different types of animations to the whole scene. Some of the animations are related to the body without interacting with any external object and the others by interacting with an external objects such as the ball and table.
+We applied many different types of animations to the whole scene. Some of the animations are related to the body without interacting with any external object and the others by interacting with an external objects such as the ball and table.
 
-### The idea of the animation
+### The basic idea of the animation
 The basic idea of applying an animation to a robotic body or to any object is to change its state or its position in different steps and swapping the buffer in each frame rapidly. This will make the scene looks like it's animating.
 
 ### Types of animations
 - Walking forward
 - Walking backward
+- Rotating and walking in any direction
 - Jumping
 - Jumping Forward
 - Kicking a ball on the ground or above a table
@@ -94,17 +95,28 @@ The same concept as walking forward but the joints rotates in the opposite direc
 
 <img src="results/WalkingBackward.gif" alt="Walking Backward" width="400" height="300">
 
-### 3. Jumping
+### 3. Rotating and walking in any direction
+The previous movement was in one direction only, we added more features to make the robot move in any direction. To do this, first you should rotate the body by 90 degrees then use the same function of walking forward.
+
+As you see in the following GIF.
+
+<img src="results/MovingV1.gif" alt="MovingV1" width="400" height="300">
+
+This is another explanation of this type of movement.
+
+<img src="results/MovingV2.gif" alt="MovingV2" width="400" height="300">
+
+### 4. Jumping
 As shown on the gif three joints (knee, elbow and shoulder) are rotated while jumping and the coordinates of the body is changing and return to the original state.
 
 <img src="results/Jumping.gif" alt="Jumping" width="400" height="300">
 
-### 4. Jump Forward
+### 5. Jump Forward
 This animation is made by mixing between the jumping and moving forward animations.
 
 <img src="results/JumpingOver.gif" alt="Jumping Over" width="400" height="300">
 
-### 5. Kicking a ball
+### 6. Kicking a ball
 This type of animation has 2 cases, one without interacting with the table and the other by interacting with it.
 
 ##### Case #1: Kicking the ball on the ground
@@ -148,4 +160,4 @@ We recorded this video to represent the animation process and explain all the mo
 
 ### Click on the image below to open the video
 
-[![Full-Scene-Animation Video](results/Home.png)](https://vimeo.com/422966408 "Full-Scene-Animation Video")
+[![Full-Scene-Animation-Video](results/Home.png)](https://vimeo.com/423991631 "Full-Scene-Animation Video")
