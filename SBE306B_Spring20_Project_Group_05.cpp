@@ -735,14 +735,11 @@ void jumpOver(int heightValue)
         default:
             break;
     }
-    cout<<"xBody After JumpOver: "<<xBody<<endl;
     glutPostRedisplay();
 }
 
 void rotateBodyRight(int value)
 {
-    cout<<"mainBody: "<<mainBody<<endl;
-
     if (mainBody > value) {
         mainBody = (mainBody - 1) % 360;
         rCounter += 1;
@@ -750,13 +747,11 @@ void rotateBodyRight(int value)
     } else {
         rCounter = 0;
     }
-
     glutPostRedisplay();
 }
 
 void rotateBodyLeft(int value)
 {
-    cout<<"mainBody: "<<mainBody<<endl;
     if (mainBody < value) {
         mainBody = (mainBody + 1) % 360;
         rCounter += 1;
@@ -764,7 +759,6 @@ void rotateBodyLeft(int value)
     } else {
         rCounter = 0;
     }
-
     glutPostRedisplay();
 }
 
@@ -795,19 +789,18 @@ void walkForward(int value)
      * Case 4: The walking process has finished
      */
 
-//    cout<<"xBody: "<<xBody<<"  isTable: "<<isTable<<endl;
-    cout<<"zBody: "<<zBody<<endl;
+    // Check if the body reached the table
     if (xBody > 5.3 && xBody < 6.5) {
         isTable = true;
     }
 
+    // Check if the body exceeded the table
     if (xBody > 8.55) {
         isTable = false;
     }
 
     // Reached start of the table
-    if (xBody > 5.3 && isTable)
-    {
+    if (xBody > 5.3 && isTable) {
         leg_state = 3;
 
         // Return Body to normal state
@@ -823,8 +816,7 @@ void walkForward(int value)
     }
 
     // Reached End of the floor
-    if (xBody > 11.5)
-    {
+    if (xBody > 11.5) {
         leg_state = 4;
 
         // Return Body to normal state
@@ -917,12 +909,12 @@ void walkForward(int value)
             break;
 
         case 3:
-            cout<<"Your Reached the start of the table"<<xBody<<endl;
+//            cout<<"Your Reached the start of the table"<<xBody<<endl;
             leg_state = 1;
             break;
 
         case 4:
-            cout<<"Your Reached the end of the floor"<<xBody<<endl;
+//            cout<<"Your Reached the end of the floor"<<xBody<<endl;
             leg_state = 1;
             break;
 
@@ -934,7 +926,6 @@ void walkForward(int value)
             break;
 
     }
-//    cout<<"xBody: "<<xBody<<endl;
     glutPostRedisplay();
 }
 
@@ -965,7 +956,6 @@ void walkBackward(int value)
      * Case 4: The walking process has finished
      */
 
-    cout<<"isTable: "<<isTable<<endl;
     if (xBody > 8.52 && xBody < 8.8) {
         isTable = true;
     }
@@ -990,7 +980,6 @@ void walkBackward(int value)
     // Reached Start of the floor
     if (xBody < -6)
     {
-        cout<<"xBody: "<<xBody<<endl;
         leg_state = 4;
 
         // Return Body to normal state
@@ -1067,12 +1056,12 @@ void walkBackward(int value)
             break;
 
         case 3:
-            cout<<"Your Reached the end of the table "<<xBody<<endl;
+//            cout<<"Your Reached the end of the table "<<xBody<<endl;
             leg_state = 1;
             break;
 
         case 4:
-            cout<<"Your Reached the start of the floor "<<xBody<<endl;
+//            cout<<"Your Reached the start of the floor "<<xBody<<endl;
             leg_state = 1;
             break;
 
@@ -1136,13 +1125,13 @@ void kick(int kickValue)
             {
                 // If the ball exists
                 dist_BallBody = abs(xBall) - abs(xBody);
-                cout<<"Distance Between Ball and Body "<<dist_BallBody<<endl;
+//                cout<<"Distance Between Ball and Body "<<dist_BallBody<<endl;
                 if (dist_BallBody > 0.7f && dist_BallBody < 1.4f)
                 {
-                    cout<<"Ball Exists"<<endl;
+//                    cout<<"Ball Exists"<<endl;
                     kick_state = 3;
                 } else {
-                    cout<<"Ball Doesn't Exist"<<endl;
+//                    cout<<"Ball Doesn't Exist"<<endl;
                     kick_state = 4;
                 }
             }
@@ -1158,10 +1147,10 @@ void kick(int kickValue)
 
                 // Check If the ball is near to the table
                 dist_BallTable = xTable - xBall;
-                cout<<"Distance Between Ball and Table "<<dist_BallTable<<endl;
+//                cout<<"Distance Between Ball and Table "<<dist_BallTable<<endl;
                 if ((dist_BallTable < 6.2f))
                 {
-                    cout << "Table Exists" << endl;
+//                    cout << "Table Exists" << endl;
                     xBall += 0.1;
                     // Kick the ball up and down again on the table
                     if (kickDistance < float(kickValue)/1.5) {
@@ -1188,7 +1177,7 @@ void kick(int kickValue)
                 }
             }
             else {
-                cout<<"Ball has reached the target"<<endl;
+//                cout<<"Ball has reached the target"<<endl;
                 // Reset the distance to check on it on the next kick
                 kickDistance = 0;
                 kick_state = 0;
@@ -1201,7 +1190,7 @@ void kick(int kickValue)
             if (rightLeg < 0) {
                 rightLeg += 1;
             } else {
-                cout<<"Leg Returned to Origin State"<<endl;
+//                cout<<"Leg Returned to Origin State"<<endl;
                 kick_state = 0;
             }
             glutTimerFunc(10, kick,kickValue);
