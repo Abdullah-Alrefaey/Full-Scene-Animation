@@ -419,7 +419,7 @@ void reshape(int w, int h)
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(100.0, (GLfloat)w / (GLfloat)h, 1.0, 30.0);
+    gluPerspective(125.0, (GLfloat)w / (GLfloat)h, 1.0, 30.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(0.0, 0.0, -5.0);
@@ -796,6 +796,7 @@ void walkForward(int value)
      */
 
 //    cout<<"xBody: "<<xBody<<"  isTable: "<<isTable<<endl;
+    cout<<"zBody: "<<zBody<<endl;
     if (xBody > 5.3 && xBody < 6.5) {
         isTable = true;
     }
@@ -843,7 +844,7 @@ void walkForward(int value)
         case 1:
             if (rightLeg > -45) {
                 // Move Body
-                // +ve x-direction
+                // Check on movement's direction
                 if (mainBody == 0) {
                     xBody += 0.03;
                 } else if (mainBody == -90 || mainBody == 270) {
@@ -880,7 +881,7 @@ void walkForward(int value)
         case 2:
             if (rightLeg < 0) {
                 // Move Body
-                // +ve x-direction
+                // Check on movement's direction
                 if (mainBody == 0) {
                     xBody += 0.03;
                 } else if (mainBody == -90 || mainBody == 270) {
