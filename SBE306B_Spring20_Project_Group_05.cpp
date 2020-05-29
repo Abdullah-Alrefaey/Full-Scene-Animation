@@ -744,7 +744,7 @@ void rotateBodyRight(int value)
     cout<<"mainBody: "<<mainBody<<endl;
 
     if (mainBody > value) {
-        mainBody -= 1;
+        mainBody = (mainBody - 1) % 360;
         rCounter += 1;
         glutTimerFunc(10, rotateBodyRight, mainBody + rCounter - 90);
     } else {
@@ -758,7 +758,7 @@ void rotateBodyLeft(int value)
 {
     cout<<"mainBody: "<<mainBody<<endl;
     if (mainBody < value) {
-        mainBody += 1;
+        mainBody = (mainBody + 1) % 360;
         rCounter += 1;
         glutTimerFunc(10, rotateBodyLeft, mainBody - rCounter + 90);
     } else {
@@ -795,7 +795,7 @@ void walkForward(int value)
      * Case 4: The walking process has finished
      */
 
-    cout<<"xBody: "<<xBody<<"  isTable: "<<isTable<<endl;
+//    cout<<"xBody: "<<xBody<<"  isTable: "<<isTable<<endl;
     if (xBody > 5.3 && xBody < 6.5) {
         isTable = true;
     }
@@ -843,7 +843,16 @@ void walkForward(int value)
         case 1:
             if (rightLeg > -45) {
                 // Move Body
-                xBody += 0.03;
+                // +ve x-direction
+                if (mainBody == 0) {
+                    xBody += 0.03;
+                } else if (mainBody == -90 || mainBody == 270) {
+                    zBody += 0.03;
+                } else if (mainBody == -180 || mainBody == 180) {
+                    xBody -= 0.03;
+                } else if (mainBody == -270 || mainBody == 90) {
+                    zBody -= 0.03;
+                }
 
                 // Move Right Leg Forward
                 rightLeg -= 1;
@@ -871,7 +880,16 @@ void walkForward(int value)
         case 2:
             if (rightLeg < 0) {
                 // Move Body
-                xBody += 0.03;
+                // +ve x-direction
+                if (mainBody == 0) {
+                    xBody += 0.03;
+                } else if (mainBody == -90 || mainBody == 270) {
+                    zBody += 0.03;
+                } else if (mainBody == -180 || mainBody == 180) {
+                    xBody -= 0.03;
+                } else if (mainBody == -270 || mainBody == 90) {
+                    zBody -= 0.03;
+                }
 
                 // Move Right Leg
                 rightLeg += 1;
@@ -915,7 +933,7 @@ void walkForward(int value)
             break;
 
     }
-    cout<<"xBody: "<<xBody<<endl;
+//    cout<<"xBody: "<<xBody<<endl;
     glutPostRedisplay();
 }
 
