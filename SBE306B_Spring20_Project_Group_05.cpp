@@ -54,6 +54,7 @@ static float returningPosition = 1;
 static int jump_state = 1;
 static int leg_state = 1;
 static int kick_state = 1;
+static bool isTable = false;
 
 // Objects instances
 Model table("data/taburet1_update.obj");        // table Model
@@ -106,6 +107,8 @@ void moveForward();
 void moveBack();
 void specialKeys(int key, int x, int y);
 void jump(int value);
+void rotateBodyRight(int value);
+void rotateBodyLeft(int value);
 void walkForward(int value);
 void walkBackward(int value);
 void jumpOver(int value);
@@ -669,8 +672,8 @@ void jumpOver(int heightValue)
         case 1:
             if (yBody < float(heightValue))
             {
-                yBody += 0.05;
-                xBody += 0.025;
+                yBody += 0.07;
+                xBody += 0.05;
 
                 // Moving the shoulders
                 leftShoulderY += 1;
@@ -695,7 +698,7 @@ void jumpOver(int heightValue)
         case 2:
             if(yBody > returningPosition)
             {
-                yBody -= 0.05;
+                yBody -= 0.07;
                 xBody += 0.025;
 
                 // Moving the shoulders
@@ -719,12 +722,39 @@ void jumpOver(int heightValue)
 
         // Returned to ground
         case 0:
+            // if he jumped over the table
+            if (xBody > 7.85) {
+                isTable = false;
+            }
             jump_state = 1;
             break;
 
         default:
             break;
     }
+    cout<<"xBody After JumpOver: "<<xBody<<endl;
+    glutPostRedisplay();
+}
+
+void rotateBodyRight(int value)
+{
+    cout<<"mainBody: "<<mainBody<<endl;
+    if (mainBody > -90) {
+        mainBody -= 1;
+        glutTimerFunc(1000/60, rotateBodyRight, 90);
+    }
+
+    glutPostRedisplay();
+}
+
+void rotateBodyLeft(int value)
+{
+    cout<<"mainBody: "<<mainBody<<endl;
+    if (mainBody < 0) {
+        mainBody += 1;
+        glutTimerFunc(1000/60, rotateBodyLeft, 90);
+    }
+
     glutPostRedisplay();
 }
 
@@ -755,10 +785,36 @@ void walkForward(int value)
      * Case 4: The walking process has finished
      */
 
+    cout<<"xBody: "<<xBody<<"  isTable: "<<isTable<<endl;
+    if (xBody > 5.3 && xBody < 6.5) {
+        isTable = true;
+    }
+
+    if (xBody > 8.55) {
+        isTable = false;
+    }
+
+    // Reached start of the table
+    if (xBody > 5.3 && isTable)
+    {
+        leg_state = 3;
+
+        // Return Body to normal state
+        rightLeg = 0;
+        rightKnee = 0;
+        leftLeg = 0;
+        leftKnee = 0;
+
+        leftShoulderY = -90;
+        rightShoulderY = 90;
+        leftShoulderZ = 0;
+        rightShoulderZ = 0;
+    }
+
     // Reached End of the floor
     if (xBody > 11.5)
     {
-        leg_state = 3;
+        leg_state = 4;
 
         // Return Body to normal state
         rightLeg = 0;
@@ -832,6 +888,11 @@ void walkForward(int value)
             break;
 
         case 3:
+            cout<<"Your Reached the start of the table"<<xBody<<endl;
+            leg_state = 1;
+            break;
+
+        case 4:
             cout<<"Your Reached the end of the floor"<<xBody<<endl;
             leg_state = 1;
             break;
@@ -844,6 +905,7 @@ void walkForward(int value)
             break;
 
     }
+    cout<<"xBody: "<<xBody<<endl;
     glutPostRedisplay();
 }
 
@@ -874,11 +936,33 @@ void walkBackward(int value)
      * Case 4: The walking process has finished
      */
 
+    cout<<"isTable: "<<isTable<<endl;
+    if (xBody > 8.52 && xBody < 8.8) {
+        isTable = true;
+    }
+
+    // Reached End of the table
+    if (xBody > 8.52 && isTable)
+    {
+        leg_state = 3;
+
+        // Return Body to normal state
+        rightLeg = 0;
+        rightKnee = 0;
+        leftLeg = 0;
+        leftKnee = 0;
+
+        leftShoulderY = -90;
+        rightShoulderY = 90;
+        leftShoulderZ = 0;
+        rightShoulderZ = 0;
+    }
+
     // Reached Start of the floor
     if (xBody < -6)
     {
         cout<<"xBody: "<<xBody<<endl;
-        leg_state = 3;
+        leg_state = 4;
 
         // Return Body to normal state
         rightLeg = 0;
@@ -954,6 +1038,11 @@ void walkBackward(int value)
             break;
 
         case 3:
+            cout<<"Your Reached the end of the table "<<xBody<<endl;
+            leg_state = 1;
+            break;
+
+        case 4:
             cout<<"Your Reached the start of the floor "<<xBody<<endl;
             leg_state = 1;
             break;
@@ -966,6 +1055,7 @@ void walkBackward(int value)
             break;
 
     }
+    cout<<"xBody: "<<xBody<<endl;
     glutPostRedisplay();
 }
 
@@ -1125,7 +1215,7 @@ void keyboard(unsigned char key, int x, int y)
 
         // Long Jump
         case 'l':
-            jumpOver(3);
+            jumpOver(4);
             break;
 
         case '+':
@@ -1137,10 +1227,12 @@ void keyboard(unsigned char key, int x, int y)
 
         // Whole Body
         case 'b':
-            mainBody -= 5;
+            rotateBodyRight(90);
+//            mainBody -= 5;
             break;
         case 'B':
-            mainBody += 5;
+            rotateBodyLeft(90);
+//            mainBody += 5;
             break;
 
         // Left ShoulderY
